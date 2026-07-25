@@ -1,4 +1,6 @@
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+// API route for provenance records
+// Uses TanStack server route pattern for this version
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const recordSchema = z.object({
@@ -34,20 +36,13 @@ const recordSchema = z.object({
   })).optional().default([]),
 });
 
-export const APIRoute = createAPIFileRoute("/api/v1/records")({
-  POST: async ({ request }) => {
-    const body = await request.json();
-    const parsed = recordSchema.safeParse(body);
-    if (!parsed.success) {
-      return Response.json({ error: "validation_error", details: parsed.error.flatten() }, { status: 400 });
-    }
-    const { bindings } = await import("../../../../lib/bindings.server");
+export const createRecord = createServerFn({ method: "POST" })
+  .validator(recordSchema)
+  .handler(async ({ data }) => {
+    const { bindings } = await import("../../../lib/bindings.server");
     const env = bindings();
-    if (!env.DB) {
-      return Response.json({ error: "database_unavailable" }, { status: 503 });
-    }
+    if (!env.DB) throw new Error("Database not available");
     const id = crypto.randomUUID();
-    const data = parsed.data;
     await env.DB.prepare(
       `INSERT INTO provenance_records (id, source_project, source_project_id, user_id, brief, architecture_plan, tech_stack, version_number, file_count, total_lines, commit_hash, commit_message, repo_url, repo_name, pipeline_duration_ms, model_used, fix_rounds, build_status, test_status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -71,31 +66,31 @@ export const APIRoute = createAPIFileRoute("/api/v1/records")({
         entry.duration_ms, entry.retry_count, entry.error_message
       ).run();
     }
+    return { id, status: "created" };
+  });
 
-    return Response.json({ id, status: "created" }, { status: 201 });
-  },
-
-  GET: async ({ request }) => {
-    const { bindings } = await import("../../../../lib/bindings.server");
+export const listRecords = createServerFn({ method: "GET" })
+  .validator(z.object({
+    source: z.string().optional(),
+    limit: z.number().int().min(1).max(100).optional().default(50),
+    offset: z.number().int().min(0).optional().default(0),
+  }))
+  .handler(async ({ data }) => {
+    const { bindings } = await import("../../../lib/bindings.server");
     const env = bindings();
-    if (!env.DB) return Response.json({ error: "database_unavailable" }, { status: 503 });
-    const url = new URL(request.url);
-    const source = url.searchParams.get("source");
-    const limit = Math.min(parseInt(url.searchParams.get("limit") ?? "50"), 100);
-    const offset = parseInt(url.searchParams.get("offset") ?? "0");
+    if (!env.DB) throw new Error("Database not available");
 
     let query = "SELECT * FROM provenance_records";
     const params: string[] = [];
-    if (source) { query += " WHERE source_project = ?"; params.push(source); }
+    if (data.source) { query += " WHERE source_project = ?"; params.push(data.source); }
     query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    params.push(String(limit), String(offset));
+    params.push(String(data.limit), String(data.offset));
 
     const result = await env.DB.prepare(query).bind(...params).all();
-    const countResult = await (source
-      ? env.DB.prepare("SELECT COUNT(*) as total FROM provenance_records WHERE source_project = ?").bind(source)
+    const countResult = await (data.source
+      ? env.DB.prepare("SELECT COUNT(*) as total FROM provenance_records WHERE source_project = ?").bind(data.source)
       : env.DB.prepare("SELECT COUNT(*) as total FROM provenance_records")
     ).first<{ total: number }>();
 
-    return Response.json({ data: result.results, total: countResult?.total ?? 0, limit, offset });
-  },
-});
+    return { data: result.results, total: countResult?.total ?? 0, limit: data.limit, offset: data.offset };
+  });
