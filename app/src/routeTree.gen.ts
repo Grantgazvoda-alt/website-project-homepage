@@ -11,8 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as RecordsRouteImport } from './routes/records'
+import { Route as GraphqlRouteImport } from './routes/graphql'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RecordsRecordIdRouteImport } from './routes/records.$recordId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -22,6 +25,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraphqlRoute = GraphqlRouteImport.update({
+  id: '/graphql',
+  path: '/graphql',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -34,37 +47,75 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecordsRecordIdRoute = RecordsRecordIdRouteImport.update({
+  id: '/$recordId',
+  path: '/$recordId',
+  getParentRoute: () => RecordsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graphql': typeof GraphqlRoute
+  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graphql': typeof GraphqlRoute
+  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graphql': typeof GraphqlRoute
+  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/robots.txt' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/graphql'
+    | '/records'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/records/$recordId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/robots.txt' | '/sitemap.xml'
-  id: '__root__' | '/' | '/dashboard' | '/robots.txt' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/graphql'
+    | '/records'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/records/$recordId'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/graphql'
+    | '/records'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/records/$recordId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  GraphqlRoute: typeof GraphqlRoute
+  RecordsRoute: typeof RecordsRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -85,6 +136,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graphql': {
+      id: '/graphql'
+      path: '/graphql'
+      fullPath: '/graphql'
+      preLoaderRoute: typeof GraphqlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -99,12 +164,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/records/$recordId': {
+      id: '/records/$recordId'
+      path: '/$recordId'
+      fullPath: '/records/$recordId'
+      preLoaderRoute: typeof RecordsRecordIdRouteImport
+      parentRoute: typeof RecordsRoute
+    }
   }
 }
+
+interface RecordsRouteChildren {
+  RecordsRecordIdRoute: typeof RecordsRecordIdRoute
+}
+
+const RecordsRouteChildren: RecordsRouteChildren = {
+  RecordsRecordIdRoute: RecordsRecordIdRoute,
+}
+
+const RecordsRouteWithChildren =
+  RecordsRoute._addFileChildren(RecordsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  GraphqlRoute: GraphqlRoute,
+  RecordsRoute: RecordsRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
