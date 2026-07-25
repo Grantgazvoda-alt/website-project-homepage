@@ -7,7 +7,7 @@ async function db(): Promise<D1Database | null> {
     const { bindings } = await import("../lib/bindings.server");
     const database = bindings().DB;
     if (database) return database;
-  } catch { if (!import.meta.env.DEV) throw; }
+  } catch (e) { if (!import.meta.env.DEV) throw e; }
   if (import.meta.env.DEV) return null;
   throw new Error("Database not available");
 }
