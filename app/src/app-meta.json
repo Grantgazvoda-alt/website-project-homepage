@@ -1,7 +1,8 @@
 {
-  "og_title": null,
-  "og_description": null,
+  "og_title": "Provenance Intelligence System",
+  "og_description": "Code lineage tracking, deployment provenance, and origin certificates. Know where your code came from.",
   "og_image_url": null,
   "favicon_url": null,
-  "og_video_url": null
+  "og_video_url": null,
+  "marketplace_cover_url": null
 }
