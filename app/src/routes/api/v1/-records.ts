@@ -1,7 +1,18 @@
-// API route for provenance records
-// Uses TanStack server route pattern for this version
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+
+const lineageEntrySchema = z.object({
+  agent_id: z.string().min(1),
+  file_path: z.string().optional().default(""),
+  file_language: z.string().optional().default(""),
+  reasoning: z.string().optional().default(""),
+  model_used: z.string().optional().default(""),
+  prompt_snapshot: z.string().optional().default(""),
+  content_hash: z.string().optional().default(""),
+  duration_ms: z.number().int().optional().default(0),
+  retry_count: z.number().int().optional().default(0),
+  error_message: z.string().optional().default(""),
+});
 
 const recordSchema = z.object({
   source_project: z.enum(["stackforge", "gummy-bear"]),
@@ -22,18 +33,7 @@ const recordSchema = z.object({
   fix_rounds: z.number().int().optional(),
   build_status: z.enum(["pending", "passed", "failed", "not_run"]).optional(),
   test_status: z.enum(["pending", "passed", "failed", "not_run"]).optional(),
-  lineage: z.array(z.object({
-    agent_id: z.string().min(1),
-    file_path: z.string().optional().default(""),
-    file_language: z.string().optional().default(""),
-    reasoning: z.string().optional().default(""),
-    model_used: z.string().optional().default(""),
-    prompt_snapshot: z.string().optional().default(""),
-    content_hash: z.string().optional().default(""),
-    duration_ms: z.number().int().optional().default(0),
-    retry_count: z.number().int().optional().default(0),
-    error_message: z.string().optional().default(""),
-  })).optional().default([]),
+  lineage: z.array(lineageEntrySchema).optional().default([]),
 });
 
 export const createRecord = createServerFn({ method: "POST" })
@@ -54,7 +54,6 @@ export const createRecord = createServerFn({ method: "POST" })
       data.pipeline_duration_ms ?? 0, data.model_used ?? "", data.fix_rounds ?? 0,
       data.build_status ?? "not_run", data.test_status ?? "not_run"
     ).run();
-
     for (const entry of data.lineage) {
       const lineageId = crypto.randomUUID();
       await env.DB.prepare(
@@ -67,30 +66,4 @@ export const createRecord = createServerFn({ method: "POST" })
       ).run();
     }
     return { id, status: "created" };
-  });
-
-export const listRecords = createServerFn({ method: "GET" })
-  .validator(z.object({
-    source: z.string().optional(),
-    limit: z.number().int().min(1).max(100).optional().default(50),
-    offset: z.number().int().min(0).optional().default(0),
-  }))
-  .handler(async ({ data }) => {
-    const { bindings } = await import("../../../lib/bindings.server");
-    const env = bindings();
-    if (!env.DB) throw new Error("Database not available");
-
-    let query = "SELECT * FROM provenance_records";
-    const params: string[] = [];
-    if (data.source) { query += " WHERE source_project = ?"; params.push(data.source); }
-    query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    params.push(String(data.limit), String(data.offset));
-
-    const result = await env.DB.prepare(query).bind(...params).all();
-    const countResult = await (data.source
-      ? env.DB.prepare("SELECT COUNT(*) as total FROM provenance_records WHERE source_project = ?").bind(data.source)
-      : env.DB.prepare("SELECT COUNT(*) as total FROM provenance_records")
-    ).first<{ total: number }>();
-
-    return { data: result.results, total: countResult?.total ?? 0, limit: data.limit, offset: data.offset };
   });
