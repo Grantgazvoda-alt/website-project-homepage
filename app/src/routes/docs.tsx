@@ -36,7 +36,7 @@ function DocsPage() {
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Dashboard</Link>
             <Link to="/records" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Records</Link>
-            <a href="/spec" className="text-sm text-[#0071E3]">OpenAPI -></a>
+            <a href="/spec" className="text-sm text-[#0071E3]">OpenAPI →</a>
           </div>
         </div>
       </header>
@@ -181,7 +181,7 @@ function DocsPage() {
           <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4">
             <p className="text-xs text-[#ffd60a] font-medium mb-1">DNS Configuration</p>
             <p className="text-xs text-[#98989d] mb-2">To point a custom domain (e.g., api.yourdomain.com) to this API:</p>
-            <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  ->  provenance-intel.higgsfield.app</pre>
+            <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  →  provenance-intel.higgsfield.app</pre>
             <p className="text-xs text-[#98989d] mt-2">Add a CNAME record in your DNS provider pointing to the Provenance app URL. The platform handles TLS termination automatically.</p>
             <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
               <p className="text-xs text-[#ffd60a] font-medium mb-1">Verification</p>

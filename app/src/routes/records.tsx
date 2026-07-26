@@ -72,7 +72,7 @@ function RecordsPage() {
           </div>
         ) : records.length === 0 ? (
           <div className="mt-8 glass rounded-xl py-20 text-center">
-            <p className="text-[#98989d]">No provenance records yet. <button onClick={async () => { try { const { seedFn } = await import("../routes/api/v1/-seed"); const result = await seedFn(); alert("Created " + result.created + " sample records. Refresh to see them."); window.location.reload(); } catch(e) { alert("Error: " + e); } }} className="ml-2 rounded-lg bg-[#0071E3] px-3 py-1 text-xs font-medium text-white transition hover:bg-[#0082ff]">Seed Sample Data</button>
+            <p className="text-[#98989d]">No provenance records yet. Integrate StackForge or Gummy Bear to generate data.</p><button onClick={async () => { const { seedFn } = await import("../routes/api/v1/-seed"); const result = await seedFn(); alert("Created " + result.created + " sample records. Refresh to see them."); window.location.reload(); }} className="rounded-lg bg-[#0071E3] px-3 py-1 text-xs font-medium text-white transition hover:bg-[#0082ff]">Seed Sample Data</button>
           </div>
         ) : (
           <div className="mt-6 overflow-hidden rounded-xl border border-[rgba(255,255,255,0.06)]">

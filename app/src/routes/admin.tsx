@@ -70,7 +70,7 @@ function AdminPage() {
             <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
             <p className="mt-1 text-[#98989d]">API key management and scope administration</p>
           </div>
-          <Link to="/dashboard" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create New Key -></Link>
+          <Link to="/dashboard" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create New Key →</Link>
         </div>
 
         {updateResult && (
