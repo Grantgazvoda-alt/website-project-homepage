@@ -6,8 +6,14 @@ const htmlTemplate = (content: string) => `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Provenance API Documentation</title>
 <style>
+  @page { margin: 60px 40px; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #333; line-height: 1.6; }
-  h1 { font-size: 28px; border-bottom: 2px solid #0071E3; padding-bottom: 10px; }
+  .header { text-align: center; padding: 20px 0; border-bottom: 3px solid #0071E3; margin-bottom: 30px; }
+  .header h1 { font-size: 14px; color: #0071E3; text-transform: uppercase; letter-spacing: 2px; margin: 0; border: none; }
+  .header .logo { font-size: 28px; font-weight: bold; color: #0071E3; margin: 0; }
+  .footer { text-align: center; padding: 20px 0; border-top: 1px solid #ddd; margin-top: 40px; font-size: 11px; color: #888; }
+  .footer a { color: #0071E3; text-decoration: none; }
+  h1 { font-size: 28px; border-bottom: 2px solid #0071E3; padding-bottom: 10px; margin-top: 0; }
   h2 { font-size: 20px; margin-top: 30px; color: #0071E3; }
   h3 { font-size: 16px; margin-top: 20px; }
   pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
@@ -23,9 +29,10 @@ const htmlTemplate = (content: string) => `<!DOCTYPE html>
   .scope-read { color: #0071E3; font-weight: bold; }
   .scope-write { color: #30d158; font-weight: bold; }
   .scope-admin { color: #ff453a; font-weight: bold; }
+  .page-break { page-break-before: always; }
   @media print { body { padding: 0; } }
 </style></head>
-<body>${content}</body></html>`;
+<body><div class="header"><div class="logo">Provenance Intelligence System</div><h1>API Documentation</h1></div>${content}<div class="footer">Provenance Intelligence System — <a href="https://provenance-intel.higgsfield.app">provenance-intel.higgsfield.app</a><br>Generated on new Date().toISOString().split('T')[0]</div></body></html>`;
 
 const docsContent = `
 <h1>Provenance Intelligence System API</h1>

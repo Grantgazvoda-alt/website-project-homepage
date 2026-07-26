@@ -140,7 +140,10 @@ function DashboardPage() {
             </a>
           </div>
           <div className="mt-4 flex items-center gap-4 rounded-lg bg-[rgba(10,10,15,0.4)] p-3">
-            <img src="/coverage-badge.svg" alt="Test Coverage" className="h-5" />
+            <div className="flex items-center gap-2">
+            <img src="/coverage-badge-pass.svg" alt="Test Coverage: Pass" className="h-5" />
+            <img src="/coverage-badge-partial.svg" alt="Test Coverage: Partial" className="h-5 opacity-50" />
+            <img src="/coverage-badge-fail.svg" alt="Test Coverage: Fail" className="h-5 opacity-30" />
             <span className="text-xs text-[#636366]">100+ tests across 32 categories — <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">run coverage report</a></span>
           </div>
         </div>
