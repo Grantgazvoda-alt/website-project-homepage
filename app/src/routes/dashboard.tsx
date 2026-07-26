@@ -10,9 +10,9 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKeyName, setApiKeyName] = useState("");
+  const [apiKeyScope, setApiKeyScope] = useState("read");
   const [apiKeyResult, setApiKeyResult] = useState<string | null>(null);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
-  const [apiKeyScope, setApiKeyScope] = useState("read");
   const [creatingKey, setCreatingKey] = useState(false);
 
   const { data: analytics } = useQuery({
@@ -36,7 +36,7 @@ function DashboardPage() {
     try {
       const { createApiKey } = await import("../lib/provenance-auth.server");
       const result = await createApiKey("user-local", apiKeyName.trim(), apiKeyScope === "admin" ? "admin" : "user", apiKeyScope);
-      setApiKeyResult(`Key created: ${result.key}`);
+      setApiKeyResult("Key created: " + result.key);
       setApiKeyName("");
     } catch (e) {
       setApiKeyError(e instanceof Error ? e.message : "Failed to create API key");
@@ -48,6 +48,12 @@ function DashboardPage() {
   const copyToClipboard = async (text: string) => {
     try { await navigator.clipboard.writeText(text); } catch {}
   };
+
+  const scopes = [
+    { id: "read", label: "Read Only", desc: "Query records and lineage" },
+    { id: "write", label: "Read & Write", desc: "Create records and deployments" },
+    { id: "admin", label: "Admin", desc: "Full access including delete" },
+  ];
 
   return (
     <div className="min-h-dvh bg-[#0a0a0f] text-[#f5f5f7]">
@@ -71,7 +77,6 @@ function DashboardPage() {
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="mt-1 text-[#98989d]">Provenance Intelligence System — code lineage, deployment tracking, and origin certificates</p>
 
-        {/* Overview Cards */}
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link to="/records" className="glass rounded-xl p-5 transition hover:border-[rgba(0,113,227,0.3)]">
             <div className="flex items-center gap-2 text-[#98989d] text-sm">Total Records</div>
@@ -113,7 +118,7 @@ function DashboardPage() {
           </p>
           <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4 mb-4">
             <p className="text-xs text-[#ffd60a] font-medium mb-1">Rate Limits</p>
-            <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute. Exceeded requests return HTTP 429.</p>
+            <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute. Scopes control what each key can do.</p>
           </div>
           <div className="flex items-center gap-3 text-sm text-[#636366]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
@@ -127,19 +132,15 @@ function DashboardPage() {
             <div className="mx-4 w-full max-w-md rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(18,18,26,0.95)] p-6 shadow-2xl backdrop-blur-xl" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-lg font-semibold">Create API Key</h2>
               <p className="mt-1 text-sm text-[#98989d]">Generate a new key for programmatic access.</p>
-
               {!apiKeyResult ? (
                 <div className="mt-6">
                   <label className="block text-sm font-medium text-[#98989d] mb-2">Key Name</label>
                   <input type="text" value={apiKeyName} onChange={(e) => setApiKeyName(e.target.value)}
-                    placeholder="e.g. CI/CD Pipeline, StackForge Integration" />
+                    placeholder="e.g. CI/CD Pipeline, StackForge Integration"
+                    className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-4 py-3 text-sm text-[#f5f5f7] outline-none transition focus:border-[#0071E3] focus:ring-2 focus:ring-[rgba(0,113,227,0.2)]" />
                   <label className="block text-sm font-medium text-[#98989d] mt-4 mb-2">Key Scope</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: "read", label: "Read Only", desc: "Query records and lineage" },
-                      { id: "write", label: "Read & Write", desc: "Create records and deployments" },
-                      { id: "admin", label: "Admin", desc: "Full access including delete" },
-                    ].map((s) => (
+                    {scopes.map((s) => (
                       <button key={s.id} onClick={() => setApiKeyScope(s.id)}
                         className={`rounded-lg border p-3 text-left transition ${
                           apiKeyScope === s.id
@@ -151,9 +152,8 @@ function DashboardPage() {
                       </button>
                     ))}
                   </div>
-                  {apiKeyError && <p className="mt-2 text-sm text-[#ff453a]">{apiKeyError}</p>
-                    className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-4 py-3 text-sm text-[#f5f5f7] outline-none transition focus:border-[#0071E3] focus:ring-2 focus:ring-[rgba(0,113,227,0.2)]" />
-                                    <div className="mt-6 flex justify-end gap-3">
+                  {apiKeyError && <p className="mt-2 text-sm text-[#ff453a]">{apiKeyError}</p>}
+                  <div className="mt-6 flex justify-end gap-3">
                     <button onClick={() => setShowApiKeyModal(false)}
                       className="rounded-lg border border-[rgba(255,255,255,0.1)] px-5 py-2.5 text-sm font-medium text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)]">Cancel</button>
                     <button onClick={handleCreateApiKey} disabled={creatingKey || !apiKeyName.trim()}
@@ -183,50 +183,25 @@ function DashboardPage() {
           </div>
         )}
 
-        {/* Quick Start Guide */}
+        {/* Quick Start */}
         <div className="mt-6 glass rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">Quick Start</h2>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">1</span>
-                <h3 className="text-sm font-medium">Create an API key</h3>
+            {[
+              { n: "1", title: "Create an API key", desc: "Generate a scoped key above.", code: `POST /api/v1/auth/api-keys\nAuthorization: Bearer <token>\n{ "name": "CI/CD", "role": "user" }` },
+              { n: "2", title: "Submit provenance records", desc: "Send generation data from your code generator.", code: `POST /api/v1/records\nAuthorization: Bearer <api-key>\n{ "source_project": "gummy-bear", ... }` },
+              { n: "3", title: "Track deployments", desc: "Record where and when code was deployed.", code: `POST /api/v1/deployments\nAuthorization: Bearer <api-key>\n{ "provenance_id": "uuid", ... }` },
+              { n: "4", title: "Verify lineage", desc: "Trace files back to their origin.", code: `POST /api/v1/lineage/trace\nAuthorization: Bearer <api-key>\n{ "contentHash": "sha256-..." }` },
+            ].map((item) => (
+              <div key={item.n} className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">{item.n}</span>
+                  <h3 className="text-sm font-medium">{item.title}</h3>
+                </div>
+                <p className="text-xs text-[#98989d] mb-2">{item.desc}</p>
+                <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{item.code}</code></pre>
               </div>
-              <p className="text-xs text-[#98989d] mb-2">Generate a key for your integration above.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/auth/api-keys
-Authorization: Bearer <token>
-{ "name": "CI/CD Pipeline" }`}</code></pre>
-            </div>
-            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">2</span>
-                <h3 className="text-sm font-medium">Submit provenance records</h3>
-              </div>
-              <p className="text-xs text-[#98989d] mb-2">Send generation data from your code generator.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/records
-Authorization: Bearer <api-key>
-{ "source_project": "gummy-bear", ... }`}</code></pre>
-            </div>
-            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">3</span>
-                <h3 className="text-sm font-medium">Track deployments</h3>
-              </div>
-              <p className="text-xs text-[#98989d] mb-2">Record where and when code was deployed.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/deployments
-Authorization: Bearer <api-key>
-{ "provenance_id": "uuid", ... }`}</code></pre>
-            </div>
-            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">4</span>
-                <h3 className="text-sm font-medium">Verify lineage</h3>
-              </div>
-              <p className="text-xs text-[#98989d] mb-2">Trace files back to their origin.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/lineage/trace
-Authorization: Bearer <api-key>
-{ "contentHash": "sha256-abc123" }`}</code></pre>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -235,7 +210,7 @@ Authorization: Bearer <api-key>
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Recent Records</h2>
-              <Link to="/records" className="text-sm text-[#0071E3] hover:text-[#0082ff]">View all →</Link>
+              <Link to="/records" className="text-sm text-[#0071E3] hover:text-[#0082ff]">View all &rarr;</Link>
             </div>
             <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.06)]">
               <table className="w-full text-sm">
@@ -251,18 +226,16 @@ Authorization: Bearer <api-key>
                 <tbody>
                   {records.map((r: any) => (
                     <tr key={r.id} className="border-b border-[rgba(255,255,255,0.03)] transition hover:bg-[rgba(255,255,255,0.02)]">
+                      <td className="px-4 py-3"><Link to={"/records/" + r.id} className="font-medium text-[#0071E3] hover:text-[#0082ff]">{r.source_project}</Link></td>
                       <td className="px-4 py-3">
-                        <Link to="/records/$recordId" params={{ recordId: r.id }} className="font-medium text-[#0071E3] hover:text-[#0082ff]">{r.source_project}</Link>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`flex items-center gap-1 text-xs ${r.build_status === "passed" ? "text-[#30d158]" : r.build_status === "failed" ? "text-[#ff453a]" : "text-[#636366]"}`}>
-                          <span className={`size-1.5 rounded-full ${r.build_status === "passed" ? "bg-[#30d158]" : r.build_status === "failed" ? "bg-[#ff453a]" : "bg-[#636366]"}`} />
+                        <span className={"flex items-center gap-1 text-xs " + (r.build_status === "passed" ? "text-[#30d158]" : r.build_status === "failed" ? "text-[#ff453a]" : "text-[#636366]")}>
+                          <span className={"size-1.5 rounded-full " + (r.build_status === "passed" ? "bg-[#30d158]" : r.build_status === "failed" ? "bg-[#ff453a]" : "bg-[#636366]")} />
                           {r.build_status}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-[#98989d]">{r.file_count || 0}</td>
-                      <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "—"}</td>
-                      <td className="px-4 py-3 text-[#636366] text-xs">{r.created_at ? new Date(r.created_at + "Z").toLocaleDateString() : "—"}</td>
+                      <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "\u2014"}</td>
+                      <td className="px-4 py-3 text-[#636366] text-xs">{r.created_at ? new Date(r.created_at + "Z").toLocaleDateString() : "\u2014"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -277,7 +250,7 @@ Authorization: Bearer <api-key>
               </div>
             </div>
             <h2 className="text-xl font-semibold">No provenance records yet</h2>
-            <p className="mt-2 text-[#98989d] max-w-lg mx-auto">Connect StackForge or Gummy Bear to start recording code generation lineage, deployment tracking, and origin certificates.</p>
+            <p className="mt-2 text-[#98989d] max-w-lg mx-auto">Connect StackForge or Gummy Bear to start recording.</p>
             <div className="mt-6 flex justify-center gap-3">
               <Link to="/records" className="rounded-lg bg-[#0071E3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0082ff]">View Records</Link>
               <Link to="/docs" className="rounded-lg border border-[rgba(255,255,255,0.1)] px-6 py-3 text-sm font-medium text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)]">API Documentation</Link>
