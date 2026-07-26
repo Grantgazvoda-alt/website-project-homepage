@@ -19,11 +19,10 @@ export const loginFn = createServerFn({ method: "POST" })
   });
 
 export const createApiKeyFn = createServerFn({ method: "POST" })
-  .validator(z.object({ name: z.string().min(1), role: z.string().optional().default("user") }))
+  .validator(z.object({ name: z.string().min(1), role: z.string().optional().default("user"), scopes: z.string().optional().default("read") }))
   .handler(async ({ data }) => {
-    const { bindings } = await import("./bindings.server");
-    // In production, get userId from auth context
-    return createApiKey("user-id", data.name, data.role) as any;
+    const { createApiKey } = await import("./provenance-auth.server");
+    return createApiKey("user-local", data.name, data.role, data.scopes) as any;
   });
 
 export const listApiKeysFn = createServerFn({ method: "POST" })

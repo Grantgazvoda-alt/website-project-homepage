@@ -34,9 +34,9 @@ function DashboardPage() {
     setApiKeyError(null);
     setApiKeyResult(null);
     try {
-      const { createApiKey } = await import("../lib/provenance-auth.server");
-      const result = await createApiKey("user-local", apiKeyName.trim(), apiKeyScope === "admin" ? "admin" : "user", apiKeyScope);
-      setApiKeyResult("Key created: " + result.key);
+      const { createApiKeyFn } = await import("../lib/auth.functions");
+      const result = await createApiKeyFn({ data: { name: apiKeyName.trim(), role: apiKeyScope === "admin" ? "admin" : "user", scopes: apiKeyScope } });
+      setApiKeyResult("Key created: " + (result as any).key);
       setApiKeyName("");
     } catch (e) {
       setApiKeyError(e instanceof Error ? e.message : "Failed to create API key");
