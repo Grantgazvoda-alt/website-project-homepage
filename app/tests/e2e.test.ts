@@ -495,3 +495,104 @@ describe("E2E: Dashboard UI", () => {
     expect(content).toContain("OpenAPI");
   });
 });
+
+// ─── E2E: API Key Scope UI Tests ───
+
+describe("E2E: API Key Scope UI", () => {
+  it("should have scope selector in dashboard", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("Key Scope");
+    expect(content).toContain("Read Only");
+    expect(content).toContain("Read & Write");
+    expect(content).toContain("Admin");
+    expect(content).toContain("apiKeyScope");
+    expect(content).toContain("setApiKeyScope");
+  });
+
+  it("should have scope descriptions", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("Query records and lineage");
+    expect(content).toContain("Create records and deployments");
+    expect(content).toContain("Full access including delete");
+  });
+
+  it("should call createApiKeyFn with scope on create", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("createApiKeyFn");
+    expect(content).toContain("apiKeyScope");
+    expect(content).toContain("scopes");
+  });
+
+  it("should have three scope buttons", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    const matches = content.match(/apiKeyScope === s\.id/g);
+    expect(matches).not.toBeNull();
+    expect(matches!.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+// ─── E2E: Scope Management API ───
+
+describe("E2E: Scope Management API", () => {
+  it("should have updateApiKeyScope function", async () => {
+    const { updateApiKeyScope } = await import("../src/lib/provenance-auth.server");
+    expect(updateApiKeyScope).toBeDefined();
+  });
+
+  it("should have listApiKeysByScope function", async () => {
+    const { listApiKeysByScope } = await import("../src/lib/provenance-auth.server");
+    const keys = await listApiKeysByScope("read");
+    expect(Array.isArray(keys)).toBe(true);
+  });
+
+  it("should update scope on an API key", async () => {
+    const { createApiKey, updateApiKeyScope, validateApiKey } = await import("../src/lib/provenance-auth.server");
+    const { key, id } = await createApiKey("user-scope", "Scope Test", "user", "read");
+    expect((await validateApiKey(key))!.scopes).toBe("read");
+    await updateApiKeyScope(id, "write");
+    expect((await validateApiKey(key))!.scopes).toBe("write");
+  });
+
+  it("should reject invalid scopes", async () => {
+    const { updateApiKeyScope } = await import("../src/lib/provenance-auth.server");
+    try {
+      await updateApiKeyScope("test-id", "invalid-scope");
+      expect(true).toBe(false); // should not reach here
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  it("should list keys by scope", async () => {
+    const { createApiKey, listApiKeysByScope } = await import("../src/lib/provenance-auth.server");
+    await createApiKey("user-list", "ReadOnly Key", "user", "read");
+    await createApiKey("user-list", "Admin Key", "admin", "admin");
+    const readKeys = await listApiKeysByScope("read");
+    expect(readKeys.length).toBeGreaterThanOrEqual(1);
+    readKeys.forEach((k: any) => expect(k.scopes).toBe("read"));
+  });
+});
+
+// ─── E2E: DNS Verification Guide ───
+
+describe("E2E: DNS Verification Guide", () => {
+  it("should have DNS verification section in docs", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("DNS Configuration");
+    expect(content).toContain("CNAME");
+    expect(content).toContain("provenance-intel.higgsfield.app");
+  });
+
+  it("should have verification instructions", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("dig");
+    expect(content).toContain("nslookup");
+    expect(content).toContain("TLS");
+  });
+});

@@ -171,6 +171,17 @@ function DocsPage() {
             <p className="text-xs text-[#98989d] mb-2">To point a custom domain (e.g., api.yourdomain.com) to this API:</p>
             <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  →  provenance-intel.higgsfield.app</pre>
             <p className="text-xs text-[#98989d] mt-2">Add a CNAME record in your DNS provider pointing to the Provenance app URL. The platform handles TLS termination automatically.</p>
+            <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+              <p className="text-xs text-[#ffd60a] font-medium mb-1">Verification</p>
+              <p className="text-xs text-[#98989d] mb-2">After adding the DNS record, verify it propagates:</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded mb-2">dig api.yourdomain.com CNAME +short
+# Expected: provenance-intel.higgsfield.app</pre>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded mb-2">nslookup api.yourdomain.com
+# Expected: CNAME provenance-intel.higgsfield.app</pre>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">curl -I https://api.yourdomain.com/health
+# Expected: HTTP/2 200</pre>
+              <p className="text-xs text-[#98989d] mt-2">DNS propagation can take 5-30 minutes. TLS certificate provisioning is automatic via the platform.</p>
+            </div>
           </div>
         </Section>
         <div className="glass rounded-xl p-6 text-center">

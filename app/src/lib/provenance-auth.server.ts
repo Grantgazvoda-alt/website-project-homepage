@@ -62,9 +62,9 @@ export async function createApiKey(userId: string, name: string, role: string, s
   const hashed = await hashPassword(key);
   const id = generateId();
   await database.prepare(
-    "INSERT INTO provenance_api_keys (id, user_id, name, key_hash, key_salt, role, scopes, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))"
-  ).bind(id, userId, name, hashed.hash, hashed.salt, role).run();
-  return { key, id };
+    "INSERT INTO provenance_api_keys (id, user_id, name, key_hash, key_salt, role, scopes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))"
+  ).bind(id, userId, name, hashed.hash, hashed.salt, role, scopes).run();
+  return { key, id, scopes };
 }
 
 export async function validateApiKey(key: string): Promise<{ userId: string; role: string; id: string; scopes: string } | null> {
@@ -91,6 +91,23 @@ export async function deleteApiKey(id: string): Promise<void> {
   const database = await db();
   if (!database) return;
   await database.prepare("DELETE FROM provenance_api_keys WHERE id = ?").bind(id).run();
+}
+
+// ─── Scope Management ───
+
+export async function updateApiKeyScope(keyId: string, newScopes: string): Promise<void> {
+  const database = await db();
+  if (!database) throw new Error("Database not available");
+  const validScopes = ["read", "write", "admin"];
+  if (!validScopes.includes(newScopes)) throw new Error("Invalid scope. Must be: read, write, or admin");
+  await database.prepare("UPDATE provenance_api_keys SET scopes = ? WHERE id = ?").bind(newScopes, keyId).run();
+}
+
+export async function listApiKeysByScope(scope: string): Promise<any[]> {
+  const database = await db();
+  if (!database) return [];
+  const result = await database.prepare("SELECT id, user_id, name, role, scopes, last_used_at, created_at FROM provenance_api_keys WHERE scopes = ? ORDER BY created_at DESC").bind(scope).all();
+  return result.results ?? [];
 }
 
 // ─── Rate Limiting ───
