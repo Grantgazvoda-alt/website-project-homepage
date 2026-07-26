@@ -16,6 +16,7 @@ import { Route as GraphqlRouteImport } from './routes/graphql'
 import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SpecRouteImport } from './routes/spec'
 import { Route as RecordsRecordIdRouteImport } from './routes/records.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpecRoute = SpecRouteImport.update({
+  id: '/spec',
+  path: '/spec',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecordsRecordIdRoute = RecordsRecordIdRouteImport.update({
   id: '/$recordId',
   path: '/$recordId',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/spec': typeof SpecRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/spec': typeof SpecRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/spec': typeof SpecRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/spec'
     | '/records/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/spec'
     | '/records/$recordId'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/spec'
     | '/records/$recordId'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   RecordsRoute: typeof RecordsRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SpecRoute: typeof SpecRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spec': {
+      id: '/spec'
+      path: '/spec'
+      fullPath: '/spec'
+      preLoaderRoute: typeof SpecRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/records/$recordId': {
       id: '/records/$recordId'
       path: '/$recordId'
@@ -213,6 +233,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecordsRoute: RecordsRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SpecRoute: SpecRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
