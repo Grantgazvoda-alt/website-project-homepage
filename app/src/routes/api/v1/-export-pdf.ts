@@ -32,7 +32,11 @@ const htmlTemplate = (content: string) => `<!DOCTYPE html>
   .page-break { page-break-before: always; }
   @media print { body { padding: 0; } }
 </style></head>
-<body><div class="header"><div class="logo">Provenance Intelligence System</div><h1>API Documentation</h1></div>${content}<div class="footer">Provenance Intelligence System — <a href="https://provenance-intel.higgsfield.app">provenance-intel.higgsfield.app</a><br>Generated on new Date().toISOString().split('T')[0]</div></body></html>`;
+<body><div class="header">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0071E3" stroke-width="2" style="display: block; margin: 0 auto 10px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <div class="logo">Provenance Intelligence System</div>
+    <h1>API Documentation</h1>
+  </div>${content}<div class="footer">Provenance Intelligence System — <a href="https://provenance-intel.higgsfield.app">provenance-intel.higgsfield.app</a><br>Generated on new Date().toISOString().split('T')[0]</div></body></html>`;
 
 const docsContent = `
 <h1>Provenance Intelligence System API</h1>

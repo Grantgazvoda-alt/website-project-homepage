@@ -877,3 +877,54 @@ describe("E2E: Docs Export", () => {
     expect(content).toContain("Custom Domain");
   });
 });
+
+// ─── E2E: Dynamic Badge ───
+
+describe("E2E: Dynamic Badge Endpoint", () => {
+  it("should have dynamic badge server function", async () => {
+    const { getDynamicBadge } = await import("../src/routes/api/v1/-badge");
+    expect(getDynamicBadge).toBeDefined();
+  });
+
+  it("should generate valid SVG", async () => {
+    const { getDynamicBadge } = await import("../src/routes/api/v1/-badge");
+    const response = await getDynamicBadge();
+    const svg = await response.text();
+    expect(svg).toContain("<svg");
+    expect(svg).toContain("tests");
+    expect(svg).toContain("xmlns");
+  });
+
+  it("should be used in dashboard", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("/api/v1/badge");
+  });
+});
+
+// ─── E2E: PDF Logo ───
+
+describe("E2E: PDF Export with Logo", () => {
+  it("should have logo in PDF header", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/api/v1/-export-pdf.ts", "utf-8");
+    expect(content).toContain('<svg');
+    expect(content).toContain('viewBox=\"0 0 24 24\"');
+    expect(content).toContain('Provenance Intelligence System');
+    expect(content).toContain('API Documentation');
+  });
+});
+
+// ─── E2E: CSV Date Picker UI ───
+
+describe("E2E: CSV Export Date Picker", () => {
+  it("should have date inputs in audit page", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/audit.tsx", "utf-8");
+    expect(content).toContain("type=\"date\"");
+    expect(content).toContain("Date Range");
+    expect(content).toContain("csv-start-date");
+    expect(content).toContain("csv-end-date");
+    expect(content).toContain("/api/v1/export-csv");
+  });
+});

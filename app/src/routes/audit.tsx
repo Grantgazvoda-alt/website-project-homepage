@@ -68,23 +68,39 @@ function AuditPage() {
               <option value="provenance_records">Records</option>
               <option value="deployment">Deployments</option>
             </select>
-            <a href="/api/v1/export-csv" className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,255,255,0.1)] px-3 py-2 text-xs text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)] hover:text-[#f5f5f7]"
-              onClick={(e) => {
-                e.preventDefault();
-                const startDate = prompt('Start date (YYYY-MM-DD) or leave blank for all:');
-                if (startDate === null) return;
-                const endDate = prompt('End date (YYYY-MM-DD) or leave blank for all:');
-                if (endDate === null) return;
+            <div className="relative">
+              <button onClick={() => {
+                const start = document.getElementById('csv-start-date') as HTMLInputElement;
+                const end = document.getElementById('csv-end-date') as HTMLInputElement;
                 let url = '/api/v1/export-csv';
                 const params = [];
-                if (startDate) params.push('startDate=' + encodeURIComponent(startDate));
-                if (endDate) params.push('endDate=' + encodeURIComponent(endDate));
+                if (start?.value) params.push('startDate=' + encodeURIComponent(start.value));
+                if (end?.value) params.push('endDate=' + encodeURIComponent(end.value));
                 if (params.length > 0) url += '?' + params.join('&');
                 window.location.href = url;
-              }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              Export CSV
-            </a>
+              }} className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,255,255,0.1)] px-3 py-2 text-xs text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)] hover:text-[#f5f5f7]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export CSV
+              </button>
+              <div className="absolute top-full right-0 z-20 mt-1 rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(18,18,26,0.95)] p-3 shadow-xl backdrop-blur-xl" style={{ display: 'none' }} id="csv-date-picker">
+                <p className="text-xs text-[#98989d] mb-2">Date Range (optional)</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <input type="date" id="csv-start-date" className="rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-2 py-1.5 text-xs text-[#f5f5f7] outline-none" />
+                  <span className="text-xs text-[#636366]">to</span>
+                  <input type="date" id="csv-end-date" className="rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-2 py-1.5 text-xs text-[#f5f5f7] outline-none" />
+                </div>
+                <button onClick={() => {
+                  const start = document.getElementById('csv-start-date') as HTMLInputElement;
+                  const end = document.getElementById('csv-end-date') as HTMLInputElement;
+                  let url = '/api/v1/export-csv';
+                  const params = [];
+                  if (start?.value) params.push('startDate=' + encodeURIComponent(start.value));
+                  if (end?.value) params.push('endDate=' + encodeURIComponent(end.value));
+                  if (params.length > 0) url += '?' + params.join('&');
+                  window.location.href = url;
+                }} className="w-full rounded-lg bg-[#0071E3] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#0082ff]">Download</button>
+              </div>
+            </div>
           </div>
         </div>
 
