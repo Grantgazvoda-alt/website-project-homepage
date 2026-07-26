@@ -1,4 +1,4 @@
-// Provenance Intelligence System — Core Server Data Layer
+// Provenance Intelligence System -- Core Server Data Layer
 import type { D1Database, R2Bucket } from "@cloudflare/workers-types";
 import { z } from "zod";
 
@@ -259,7 +259,7 @@ export async function graphql(query: string, variables?: Record<string, any>) {
   const database = await db();
   if (!database) throw new Error("Database not available");
 
-  // Simple GraphQL executor — handles the queries we need
+  // Simple GraphQL executor -- handles the queries we need
   const gql = query.trim();
 
   // Query: provenance(id)

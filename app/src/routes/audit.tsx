@@ -130,7 +130,7 @@ function AuditPage() {
                 {logs.map((log: any) => (
                   <tr key={log.id} className="border-b border-[rgba(255,255,255,0.03)] transition hover:bg-[rgba(255,255,255,0.02)]">
                     <td className="px-4 py-3 text-xs text-[#636366] whitespace-nowrap">
-                      {log.created_at ? new Date(log.created_at + "Z").toLocaleString() : "—"}
+                      {log.created_at ? new Date(log.created_at + "Z").toLocaleString() : "--"}
                     </td>
                     <td className="px-4 py-3">
                       <span className="font-mono text-xs text-[#98989d]">{log.actor_id}</span>
@@ -145,9 +145,9 @@ function AuditPage() {
                       <br />
                       <span className="font-mono text-[10px] text-[#636366]">{log.target_id?.slice(0, 12)}...</span>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#636366] max-w-[120px] truncate">{log.old_value || "—"}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#0071E3] max-w-[120px] truncate">{log.new_value || "—"}</td>
-                    <td className="px-4 py-3 text-[10px] text-[#636366] max-w-[150px] truncate" title={log.metadata}>{log.metadata || "—"}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-[#636366] max-w-[120px] truncate">{log.old_value || "--"}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-[#0071E3] max-w-[120px] truncate">{log.new_value || "--"}</td>
+                    <td className="px-4 py-3 text-[10px] text-[#636366] max-w-[150px] truncate" title={log.metadata}>{log.metadata || "--"}</td>
                   </tr>
                 ))}
               </tbody>

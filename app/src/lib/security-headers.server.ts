@@ -7,7 +7,7 @@ export function applySecurityHeaders(response: Response): Response {
   // Framing: the Supercomputer Design-mode inspector + preview render this app
   // cross-origin inside an iframe. The Higgsfield hosting platform injects the
   // canonical `frame-ancestors` allowlist on every app response, so this app
-  // MUST NOT set its own — browsers intersect multiple CSP headers, so a second
+  // MUST NOT set its own -- browsers intersect multiple CSP headers, so a second
   // (stricter) list here can only ever subtract from the platform's allowlist
   // and silently block the embed. We also deliberately do NOT set
   // `X-Frame-Options` (no cross-origin allowlist; SAMEORIGIN/DENY would blank

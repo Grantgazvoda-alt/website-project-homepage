@@ -47,7 +47,7 @@ function RecordsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Provenance Records</h1>
-            <p className="mt-1 text-sm text-[#98989d]">{total} total records — code generation lineage and deployment history</p>
+            <p className="mt-1 text-sm text-[#98989d]">{total} total records -- code generation lineage and deployment history</p>
           </div>
           <div className="flex items-center gap-3">
             {analytics && (
@@ -94,7 +94,7 @@ function RecordsPage() {
                   <tr key={r.id} className="border-b border-[rgba(255,255,255,0.03)] transition hover:bg-[rgba(255,255,255,0.02)]">
                     <td className="px-4 py-3">
                       <Link to="/records/$recordId" params={{ recordId: r.id }} className="font-medium text-[#0071E3] hover:text-[#0082ff]">
-                        {r.source_project_id?.slice(0, 8) || "—"}
+                        {r.source_project_id?.slice(0, 8) || "--"}
                       </Link>
                     </td>
                     <td className="px-4 py-3">
@@ -108,9 +108,9 @@ function RecordsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-[#98989d]">{r.file_count || 0}</td>
-                    <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "—"}</td>
-                    <td className="px-4 py-3 text-[#98989d]">{r.deployments ?? "—"}</td>
-                    <td className="px-4 py-3 text-[#636366] text-xs">{r.created_at ? new Date(r.created_at + "Z").toLocaleDateString() : "—"}</td>
+                    <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "--"}</td>
+                    <td className="px-4 py-3 text-[#98989d]">{r.deployments ?? "--"}</td>
+                    <td className="px-4 py-3 text-[#636366] text-xs">{r.created_at ? new Date(r.created_at + "Z").toLocaleDateString() : "--"}</td>
                   </tr>
                 ))}
               </tbody>

@@ -40,7 +40,7 @@ function LandingPage() {
           <span className="gradient-accent">came from. Always.</span>
         </h1>
         <p className="mt-8 max-w-2xl text-lg text-[#98989d] md:text-xl">
-          Provenance Intelligence System tracks every generated file back to its origin — the brief, the agent decisions, the prompts, and the deployment. Full audit trail, one-click rollback, and verifiable origin certificates.
+          Provenance Intelligence System tracks every generated file back to its origin -- the brief, the agent decisions, the prompts, and the deployment. Full audit trail, one-click rollback, and verifiable origin certificates.
         </p>
         <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
           <a href="/dashboard" className="group flex items-center gap-2 rounded-xl bg-[#0071E3] px-8 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,113,227,0.4)] transition hover:bg-[#0082ff] hover:shadow-[0_0_40px_rgba(0,113,227,0.6)]">
@@ -61,7 +61,7 @@ function LandingPage() {
               { num: "02", title: "Track Lineage", desc: "Trace any file back to the exact agent, prompt, and reasoning that produced it. SHA-256 content hashes ensure integrity." },
               { num: "03", title: "Monitor Deployments", desc: "Track deployments across preview, staging, and production. Poll Vercel, Netlify, and Render for live status." },
               { num: "04", title: "One-Click Rollback", desc: "Revert to any previous deployment. Impact analysis shows what changes will be reverted before you confirm." },
-              { num: "05", title: "Origin Certificates", desc: "Cryptographically signed certificates linking brief → agent decisions → generated code → deployment. Tamper-evident." },
+              { num: "05", title: "Origin Certificates", desc: "Cryptographically signed certificates linking brief -> agent decisions -> generated code -> deployment. Tamper-evident." },
               { num: "06", title: "Cross-Project Analytics", desc: "Aggregate build success rates, model usage, and error patterns across StackForge and Gummy Bear projects." },
             ].map((f) => (
               <div key={f.num} className="glass rounded-xl p-6 transition hover:border-[rgba(0,113,227,0.3)]">

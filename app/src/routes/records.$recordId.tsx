@@ -71,11 +71,11 @@ function RecordDetailPage() {
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wide text-[#636366]">Tech Stack</span>
-                  <p className="mt-1 text-sm">{r.tech_stack || "—"}</p>
+                  <p className="mt-1 text-sm">{r.tech_stack || "--"}</p>
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wide text-[#636366]">Model Used</span>
-                  <p className="mt-1 text-sm font-mono text-[#0071E3]">{r.model_used || "—"}</p>
+                  <p className="mt-1 text-sm font-mono text-[#0071E3]">{r.model_used || "--"}</p>
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wide text-[#636366]">Build Status</span>
@@ -95,7 +95,7 @@ function RecordDetailPage() {
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wide text-[#636366]">Created</span>
-                  <p className="mt-1 text-sm text-[#98989d]">{r.created_at ? new Date(r.created_at + "Z").toLocaleString() : "—"}</p>
+                  <p className="mt-1 text-sm text-[#98989d]">{r.created_at ? new Date(r.created_at + "Z").toLocaleString() : "--"}</p>
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wide text-[#636366]">Fix Rounds</span>
@@ -107,7 +107,7 @@ function RecordDetailPage() {
             {/* Brief */}
             <div className="glass rounded-xl p-6">
               <h3 className="text-sm font-semibold mb-3">Original Brief</h3>
-              <p className="text-sm text-[#98989d] leading-relaxed whitespace-pre-wrap">{r.brief || "—"}</p>
+              <p className="text-sm text-[#98989d] leading-relaxed whitespace-pre-wrap">{r.brief || "--"}</p>
             </div>
 
             {/* Architecture Plan */}

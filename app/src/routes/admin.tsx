@@ -70,7 +70,7 @@ function AdminPage() {
             <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
             <p className="mt-1 text-[#98989d]">API key management and scope administration</p>
           </div>
-          <Link to="/dashboard" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create New Key →</Link>
+          <Link to="/dashboard" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create New Key -></Link>
         </div>
 
         {updateResult && (
@@ -127,7 +127,7 @@ function AdminPage() {
                     </td>
                     <td className="px-4 py-3 text-[#636366]">{key.role}</td>
                     <td className="px-4 py-3 font-mono text-xs text-[#636366]">{key.id.slice(0, 12)}...</td>
-                    <td className="px-4 py-3 text-[#636366] text-xs">{key.created_at ? new Date(key.created_at + "Z").toLocaleDateString() : "—"}</td>
+                    <td className="px-4 py-3 text-[#636366] text-xs">{key.created_at ? new Date(key.created_at + "Z").toLocaleDateString() : "--"}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <button onClick={() => { setEditingScope(key.id); setNewScope(key.scopes); }}

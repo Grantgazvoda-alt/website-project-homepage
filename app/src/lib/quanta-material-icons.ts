@@ -9,10 +9,10 @@
  * `@higgsfield-ai/icons/<Name>` subpath a quanta component imports, mapped to its
  * closest Google Material Symbols glyph (`@material-symbols/svg-400`,
  * Apache-2.0), loaded as a React component via vite-plugin-svgr with
- * `fill: currentColor`, so it drops straight into quanta's `<Icon as={…}>`
+ * `fill: currentColor`, so it drops straight into quanta's `<Icon as={...}>`
  * (which sizes + colors the glyph via CSS tokens on the svg element).
  *
- * The app icon set is Material Symbols OUTLINED (weight 400) — one icon family
+ * The app icon set is Material Symbols OUTLINED (weight 400) -- one icon family
  * everywhere; use the `-fill` variants only for very small glyphs that need to
  * read solid. Only the generic UI glyphs the SHIPPED quanta components use are
  * mapped; if a future quanta sync adds a new glyph to a component, add it here
@@ -37,8 +37,8 @@ import Warning from "@material-symbols/svg-400/outlined/warning.svg?react";
 
 // TYPE BRIDGE, not a runtime change: svgr components are typed against the
 // app's @types/react while quanta types glyphs against its own vendored copy
-// (`IconGlyph`). Runtime is unaffected — the glyphs just spread props onto
-// the <svg> — so re-export each icon cast to quanta's IconGlyph.
+// (`IconGlyph`). Runtime is unaffected -- the glyphs just spread props onto
+// the <svg> -- so re-export each icon cast to quanta's IconGlyph.
 const glyph = (icon: unknown): IconGlyph => icon as IconGlyph;
 
 export const IconMagnifyingGlass2Outlined = glyph(SearchGlyph);

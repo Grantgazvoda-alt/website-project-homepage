@@ -36,7 +36,7 @@ function DocsPage() {
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Dashboard</Link>
             <Link to="/records" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Records</Link>
-            <a href="/spec" className="text-sm text-[#0071E3]">OpenAPI →</a>
+            <a href="/spec" className="text-sm text-[#0071E3]">OpenAPI -></a>
           </div>
         </div>
       </header>
@@ -52,7 +52,7 @@ function DocsPage() {
             OpenAPI Spec
           </a>
         </div>
-        <p className="text-sm text-[#98989d] mb-8">An OpenAPI 3.1.0 specification is available at <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">/spec</a> — import into Postman, Swagger UI, or any API client.</p>
+        <p className="text-sm text-[#98989d] mb-8">An OpenAPI 3.1.0 specification is available at <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">/spec</a> -- import into Postman, Swagger UI, or any API client.</p>
 
         <Section title="Authentication">
           <p className="text-sm text-[#98989d] mb-4">All API endpoints require authentication via Bearer token in the Authorization header. Tokens can be JWT (user session) or API key (programmatic access).</p>
@@ -86,7 +86,7 @@ function DocsPage() {
                 <li>Click "Create New Key" in the API Keys section</li>
                 <li>Enter a name and select a scope from the three options</li>
                 <li>Click "Create Key" to generate the scoped key</li>
-                <li>The key is shown once — copy it immediately</li>
+                <li>The key is shown once -- copy it immediately</li>
               </ol>
               <p className="text-xs text-[#98989d] mt-2">To update an existing key's scope, use the <code className="text-[#0071E3]">updateApiKeyScope</code> API endpoint. Admin keys can manage all keys via the API.</p>
             </div>
@@ -181,7 +181,7 @@ function DocsPage() {
           <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4">
             <p className="text-xs text-[#ffd60a] font-medium mb-1">DNS Configuration</p>
             <p className="text-xs text-[#98989d] mb-2">To point a custom domain (e.g., api.yourdomain.com) to this API:</p>
-            <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  →  provenance-intel.higgsfield.app</pre>
+            <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  ->  provenance-intel.higgsfield.app</pre>
             <p className="text-xs text-[#98989d] mt-2">Add a CNAME record in your DNS provider pointing to the Provenance app URL. The platform handles TLS termination automatically.</p>
             <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
               <p className="text-xs text-[#ffd60a] font-medium mb-1">Verification</p>

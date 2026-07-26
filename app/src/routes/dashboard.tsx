@@ -77,7 +77,7 @@ function DashboardPage() {
 
       <main className="mx-auto max-w-7xl px-6 py-12">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-[#98989d]">Provenance Intelligence System — code lineage, deployment tracking, and origin certificates</p>
+        <p className="mt-1 text-[#98989d]">Provenance Intelligence System -- code lineage, deployment tracking, and origin certificates</p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link to="/records" className="glass rounded-xl p-5 transition hover:border-[rgba(0,113,227,0.3)]">
@@ -87,7 +87,7 @@ function DashboardPage() {
           </Link>
           <div className="glass rounded-xl p-5">
             <div className="flex items-center gap-2 text-[#98989d] text-sm">Build Success Rate</div>
-            <div className="mt-2 text-3xl font-bold">{a.total > 0 ? Math.round((a.passed / a.total) * 100) + "%" : "—"}</div>
+            <div className="mt-2 text-3xl font-bold">{a.total > 0 ? Math.round((a.passed / a.total) * 100) + "%" : "--"}</div>
             <p className="mt-1 flex items-center gap-2 text-xs text-[#636366]">
               <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-[#30d158]" /> {a.passed} passed</span>
               <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-[#ff453a]" /> {a.failed} failed</span>
@@ -141,7 +141,7 @@ function DashboardPage() {
           </div>
           <div className="mt-4 flex items-center gap-4 rounded-lg bg-[rgba(10,10,15,0.4)] p-3">
             <img src="/api/v1/badge" alt="Test Coverage" className="h-5" />
-            <span className="text-xs text-[#636366]">100+ tests across 32 categories — <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">run coverage report</a></span>
+            <span className="text-xs text-[#636366]">100+ tests across 32 categories -- <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">run coverage report</a></span>
           </div>
         </div>
 
@@ -164,7 +164,7 @@ function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 text-sm text-[#636366]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-            <span>No API keys created yet — click "Create New Key" to generate one. <Link to="/admin" className="text-[#0071E3] hover:text-[#0082ff]">Manage keys →</Link></span>
+            <span>No API keys created yet -- click "Create New Key" to generate one. <Link to="/admin" className="text-[#0071E3] hover:text-[#0082ff]">Manage keys -></Link></span>
           </div>
         </div>
 

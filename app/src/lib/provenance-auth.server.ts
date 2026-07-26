@@ -1,4 +1,4 @@
-// Provenance Auth System — JWT-based auth + API key management + rate limiting
+// Provenance Auth System -- JWT-based auth + API key management + rate limiting
 import { z } from "zod";
 import type { D1Database } from "@cloudflare/workers-types";
 
