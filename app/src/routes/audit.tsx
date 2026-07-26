@@ -68,6 +68,10 @@ function AuditPage() {
               <option value="provenance_records">Records</option>
               <option value="deployment">Deployments</option>
             </select>
+            <a href="/api/v1/export-csv" className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,255,255,0.1)] px-3 py-2 text-xs text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)] hover:text-[#f5f5f7]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export CSV
+            </a>
           </div>
         </div>
 

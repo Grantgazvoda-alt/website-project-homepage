@@ -105,6 +105,46 @@ function DashboardPage() {
           </div>
         </div>
 
+        {/* Quick Actions */}
+        <div className="mt-6 glass rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Quick Actions</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <a href="/api/v1/export-pdf" className="flex items-center gap-3 rounded-lg border border-[rgba(255,255,255,0.06)] p-4 transition hover:bg-[rgba(255,255,255,0.02)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-[rgba(0,113,227,0.1)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0071E3" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Download API Docs</p>
+                <p className="text-xs text-[#98989d]">PDF-optimized HTML export</p>
+              </div>
+            </a>
+            <a href="/audit" className="flex items-center gap-3 rounded-lg border border-[rgba(255,255,255,0.06)] p-4 transition hover:bg-[rgba(255,255,255,0.02)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-[rgba(255,214,10,0.1)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd60a" strokeWidth="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium">View Audit Log</p>
+                <p className="text-xs text-[#98989d]">Scope changes and admin actions</p>
+              </div>
+            </a>
+            <a href="/admin" className="flex items-center gap-3 rounded-lg border border-[rgba(255,255,255,0.06)] p-4 transition hover:bg-[rgba(255,255,255,0.02)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-[rgba(48,209,88,0.1)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#30d158" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Admin Console</p>
+                <p className="text-xs text-[#98989d]">API key management and scopes</p>
+              </div>
+            </a>
+          </div>
+          <div className="mt-4 flex items-center gap-4 rounded-lg bg-[rgba(10,10,15,0.4)] p-3">
+            <img src="/coverage-badge.svg" alt="Test Coverage" className="h-5" />
+            <span className="text-xs text-[#636366]">100+ tests across 32 categories — <a href="/spec" className="text-[#0071E3] hover:text-[#0082ff]">run coverage report</a></span>
+          </div>
+        </div>
+
         {/* API Key Management */}
         <div className="mt-8 glass rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
