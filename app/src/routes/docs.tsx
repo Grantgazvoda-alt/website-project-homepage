@@ -69,6 +69,16 @@ function DocsPage() {
             <p className="text-xs text-[#ffd60a] font-medium mb-1">Rate Limiting</p>
             <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute per key. Exceeded requests return HTTP 429 with <code className="text-[#ffd60a]">X-RateLimit-Remaining</code> and <code className="text-[#ffd60a]">X-RateLimit-Reset</code> headers.</p>
           </div>
+          <div className="rounded-lg bg-[rgba(0,113,227,0.08)] border border-[rgba(0,113,227,0.15)] p-4 mt-3">
+            <p className="text-xs text-[#0071E3] font-medium mb-1">API Key Scopes</p>
+            <p className="text-xs text-[#98989d] mb-2">Each API key has a scope that controls its permissions:</p>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center gap-2"><span className="rounded bg-[rgba(0,113,227,0.15)] px-1.5 py-0.5 text-[10px] font-medium text-[#0071E3]">read</span><span className="text-[#98989d]">Query records, lineage, and analytics. Safe for monitoring and CI read-only access.</span></div>
+              <div className="flex items-center gap-2"><span className="rounded bg-[rgba(48,209,88,0.15)] px-1.5 py-0.5 text-[10px] font-medium text-[#30d158]">write</span><span className="text-[#98989d]">Create records, deployments, and certificates. For integrations that submit data.</span></div>
+              <div className="flex items-center gap-2"><span className="rounded bg-[rgba(255,69,58,0.15)] px-1.5 py-0.5 text-[10px] font-medium text-[#ff453a]">admin</span><span className="text-[#98989d]">Full access including delete. For key management and system administration.</span></div>
+            </div>
+            <p className="text-xs text-[#98989d] mt-2">Set the scope when creating a key. Scopes are enforced server-side on every request.</p>
+          </div>
         </Section>
 
         <Section title="Provenance Records">
@@ -140,6 +150,29 @@ function DocsPage() {
           </div>
         </Section>
 
+        <Section title="Custom Domain">
+          <p className="text-sm text-[#98989d] mb-4">The Provenance API is available at the following endpoints:</p>
+          <div className="space-y-2 mb-4">
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-3">
+              <p className="text-xs font-medium text-[#f5f5f7]">Production API</p>
+              <p className="text-xs font-mono text-[#0071E3] mt-1">https://provenance-intel.higgsfield.app</p>
+            </div>
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-3">
+              <p className="text-xs font-medium text-[#f5f5f7]">API Documentation</p>
+              <p className="text-xs font-mono text-[#0071E3] mt-1">https://provenance-intel.higgsfield.app/docs</p>
+            </div>
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-3">
+              <p className="text-xs font-medium text-[#f5f5f7]">OpenAPI Spec</p>
+              <p className="text-xs font-mono text-[#0071E3] mt-1">https://provenance-intel.higgsfield.app/spec</p>
+            </div>
+          </div>
+          <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4">
+            <p className="text-xs text-[#ffd60a] font-medium mb-1">DNS Configuration</p>
+            <p className="text-xs text-[#98989d] mb-2">To point a custom domain (e.g., api.yourdomain.com) to this API:</p>
+            <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">CNAME  api.yourdomain.com  ->  provenance-intel.higgsfield.app</pre>
+            <p className="text-xs text-[#98989d] mt-2">Add a CNAME record in your DNS provider pointing to the Provenance app URL. The platform handles TLS termination automatically.</p>
+          </div>
+        </Section>
         <div className="glass rounded-xl p-6 text-center">
           <h2 className="text-lg font-semibold mb-2">OpenAPI Specification</h2>
           <p className="text-sm text-[#98989d] mb-4">Download the complete OpenAPI 3.1.0 specification for use with your API client.</p>

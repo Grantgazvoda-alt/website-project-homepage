@@ -381,3 +381,117 @@ describe("E2E: API Key Scoping", () => {
     expect(hasScope).toBe(true);
   });
 });
+
+// ─── E2E: Custom Domain & DNS ───
+
+describe("E2E: Custom Domain & DNS", () => {
+  it("should have domain configuration in docs", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Custom Domain");
+    expect(content).toContain("provenance-intel.higgsfield.app");
+    expect(content).toContain("DNS Configuration");
+    expect(content).toContain("CNAME");
+  });
+
+  it("should have all API URLs documented", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Production API");
+    expect(content).toContain("API Documentation");
+    expect(content).toContain("OpenAPI Spec");
+    expect(content).toContain("https://provenance-intel.higgsfield.app");
+  });
+
+  it("should have correct server URL in OpenAPI spec", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    expect(spec.servers[0].url).toBe("https://provenance-intel.higgsfield.app");
+  });
+
+  it("should have navigation links from docs to all pages", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("/dashboard");
+    expect(content).toContain("/records");
+    expect(content).toContain("/spec");
+    expect(content).toContain("Dashboard");
+    expect(content).toContain("Records");
+    expect(content).toContain("OpenAPI");
+  });
+
+  it("should have all API endpoint paths in OpenAPI spec", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    const paths = Object.keys(spec.paths);
+    expect(paths).toContain("/api/v1/records");
+    expect(paths).toContain("/api/v1/records/list");
+    expect(paths).toContain("/api/v1/records/get");
+    expect(paths).toContain("/api/v1/records/delete");
+    expect(paths).toContain("/api/v1/lineage/trace");
+    expect(paths).toContain("/api/v1/lineage/trace-by-file");
+    expect(paths).toContain("/api/v1/deployments");
+    expect(paths).toContain("/api/v1/deployments/list");
+    expect(paths).toContain("/api/v1/deployments/update-status");
+    expect(paths).toContain("/api/v1/deployments/rollback");
+    expect(paths).toContain("/api/v1/deployments/rollbacks");
+    expect(paths).toContain("/api/v1/certificates");
+    expect(paths).toContain("/api/v1/certificates/verify");
+    expect(paths).toContain("/api/v1/analytics");
+    expect(paths).toContain("/api/v1/graphql");
+    expect(paths).toContain("/api/v1/auth/register");
+    expect(paths).toContain("/api/v1/auth/login");
+    expect(paths).toContain("/api/v1/auth/api-keys");
+  });
+});
+
+// ─── E2E: API Key Scoping Docs ───
+
+describe("E2E: API Key Scoping Docs", () => {
+  it("should document all three scopes", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("API Key Scopes");
+    expect(content).toContain("read");
+    expect(content).toContain("write");
+    expect(content).toContain("admin");
+    expect(content).toContain("Query records, lineage, and analytics");
+    expect(content).toContain("Create records, deployments, and certificates");
+    expect(content).toContain("Full access including delete");
+  });
+
+  it("should have scope descriptions in docs", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Set the scope when creating a key");
+    expect(content).toContain("Scopes are enforced server-side");
+  });
+});
+
+// ─── E2E: Dashboard UI Elements ───
+
+describe("E2E: Dashboard UI", () => {
+  it("should have API key creation modal elements", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("Create API Key");
+    expect(content).toContain("Key Name");
+    expect(content).toContain("Key Scope");
+    expect(content).toContain("Read Only");
+    expect(content).toContain("Read & Write");
+    expect(content).toContain("Admin");
+    expect(content).toContain("Create Key");
+    expect(content).toContain("Key Created Successfully");
+  });
+
+  it("should have navigation links", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/dashboard.tsx", "utf-8");
+    expect(content).toContain("/records");
+    expect(content).toContain("/docs");
+    expect(content).toContain("/spec");
+    expect(content).toContain("Records");
+    expect(content).toContain("API Docs");
+    expect(content).toContain("OpenAPI");
+  });
+});
