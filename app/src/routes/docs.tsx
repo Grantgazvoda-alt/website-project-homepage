@@ -78,6 +78,18 @@ function DocsPage() {
               <div className="flex items-center gap-2"><span className="rounded bg-[rgba(255,69,58,0.15)] px-1.5 py-0.5 text-[10px] font-medium text-[#ff453a]">admin</span><span className="text-[#98989d]">Full access including delete. For key management and system administration.</span></div>
             </div>
             <p className="text-xs text-[#98989d] mt-2">Set the scope when creating a key. Scopes are enforced server-side on every request.</p>
+            <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+              <p className="text-xs text-[#0071E3] font-medium mb-1">Managing Scopes in the UI</p>
+              <p className="text-xs text-[#98989d] mb-2">Scopes can be managed from the dashboard:</p>
+              <ol className="text-xs text-[#98989d] space-y-1 list-decimal list-inside">
+                <li>Navigate to the <a href="/dashboard" className="text-[#0071E3] hover:text-[#0082ff]">Dashboard</a></li>
+                <li>Click "Create New Key" in the API Keys section</li>
+                <li>Enter a name and select a scope from the three options</li>
+                <li>Click "Create Key" to generate the scoped key</li>
+                <li>The key is shown once — copy it immediately</li>
+              </ol>
+              <p className="text-xs text-[#98989d] mt-2">To update an existing key's scope, use the <code className="text-[#0071E3]">updateApiKeyScope</code> API endpoint. Admin keys can manage all keys via the API.</p>
+            </div>
           </div>
         </Section>
 

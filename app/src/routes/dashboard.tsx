@@ -69,6 +69,7 @@ function DashboardPage() {
             <Link to="/records" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Records</Link>
             <Link to="/docs" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">API Docs</Link>
             <Link to="/spec" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">OpenAPI</Link>
+            <Link to="/admin" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Admin</Link>
           </div>
         </div>
       </header>
@@ -122,7 +123,7 @@ function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 text-sm text-[#636366]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-            <span>No API keys created yet — click "Create New Key" to generate one.</span>
+            <span>No API keys created yet — click "Create New Key" to generate one. <Link to="/admin" className="text-[#0071E3] hover:text-[#0082ff]">Manage keys →</Link></span>
           </div>
         </div>
 
