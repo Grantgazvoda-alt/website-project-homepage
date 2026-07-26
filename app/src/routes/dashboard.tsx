@@ -12,6 +12,7 @@ function DashboardPage() {
   const [apiKeyName, setApiKeyName] = useState("");
   const [apiKeyResult, setApiKeyResult] = useState<string | null>(null);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [apiKeyScope, setApiKeyScope] = useState("read");
   const [creatingKey, setCreatingKey] = useState(false);
 
   const { data: analytics } = useQuery({
@@ -34,7 +35,7 @@ function DashboardPage() {
     setApiKeyResult(null);
     try {
       const { createApiKey } = await import("../lib/provenance-auth.server");
-      const result = await createApiKey("user-local", apiKeyName.trim(), "user");
+      const result = await createApiKey("user-local", apiKeyName.trim(), apiKeyScope === "admin" ? "admin" : "user", apiKeyScope);
       setApiKeyResult(`Key created: ${result.key}`);
       setApiKeyName("");
     } catch (e) {
@@ -131,10 +132,28 @@ function DashboardPage() {
                 <div className="mt-6">
                   <label className="block text-sm font-medium text-[#98989d] mb-2">Key Name</label>
                   <input type="text" value={apiKeyName} onChange={(e) => setApiKeyName(e.target.value)}
-                    placeholder="e.g. CI/CD Pipeline, StackForge Integration"
+                    placeholder="e.g. CI/CD Pipeline, StackForge Integration" />
+                  <label className="block text-sm font-medium text-[#98989d] mt-4 mb-2">Key Scope</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: "read", label: "Read Only", desc: "Query records and lineage" },
+                      { id: "write", label: "Read & Write", desc: "Create records and deployments" },
+                      { id: "admin", label: "Admin", desc: "Full access including delete" },
+                    ].map((s) => (
+                      <button key={s.id} onClick={() => setApiKeyScope(s.id)}
+                        className={`rounded-lg border p-3 text-left transition ${
+                          apiKeyScope === s.id
+                            ? "border-[#0071E3] bg-[rgba(0,113,227,0.1)]"
+                            : "border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)]"
+                        }`}>
+                        <p className="text-xs font-medium">{s.label}</p>
+                        <p className="text-[10px] text-[#636366] mt-0.5">{s.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                  {apiKeyError && <p className="mt-2 text-sm text-[#ff453a]">{apiKeyError}</p>
                     className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-4 py-3 text-sm text-[#f5f5f7] outline-none transition focus:border-[#0071E3] focus:ring-2 focus:ring-[rgba(0,113,227,0.2)]" />
-                  {apiKeyError && <p className="mt-2 text-sm text-[#ff453a]">{apiKeyError}</p>}
-                  <div className="mt-6 flex justify-end gap-3">
+                                    <div className="mt-6 flex justify-end gap-3">
                     <button onClick={() => setShowApiKeyModal(false)}
                       className="rounded-lg border border-[rgba(255,255,255,0.1)] px-5 py-2.5 text-sm font-medium text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)]">Cancel</button>
                     <button onClick={handleCreateApiKey} disabled={creatingKey || !apiKeyName.trim()}

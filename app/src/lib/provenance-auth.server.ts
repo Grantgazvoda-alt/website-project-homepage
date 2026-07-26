@@ -55,26 +55,26 @@ export async function verifyJwt(token: string): Promise<JwtPayload | null> {
 
 // ─── API Key Management ───
 
-export async function createApiKey(userId: string, name: string, role: string): Promise<{ key: string; id: string }> {
+export async function createApiKey(userId: string, name: string, role: string, scopes = "read"): Promise<{ key: string; id: string; scopes: string }> {
   const database = await db();
   if (!database) throw new Error("Database not available");
   const key = `pv_${generateId().replace(/-/g, "")}${generateId().replace(/-/g, "").slice(0, 16)}`;
   const hashed = await hashPassword(key);
   const id = generateId();
   await database.prepare(
-    "INSERT INTO provenance_api_keys (id, user_id, name, key_hash, key_salt, role, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))"
+    "INSERT INTO provenance_api_keys (id, user_id, name, key_hash, key_salt, role, scopes, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))"
   ).bind(id, userId, name, hashed.hash, hashed.salt, role).run();
   return { key, id };
 }
 
-export async function validateApiKey(key: string): Promise<{ userId: string; role: string; id: string } | null> {
+export async function validateApiKey(key: string): Promise<{ userId: string; role: string; id: string; scopes: string } | null> {
   const database = await db();
   if (!database) return null;
   const rows = await database.prepare("SELECT * FROM provenance_api_keys").all();
   for (const row of rows.results ?? []) {
     const r = row as any;
     if (await verifyPassword(key, r.key_hash, r.key_salt)) {
-      return { userId: r.user_id, role: r.role, id: r.id };
+      return { userId: r.user_id, role: r.role, id: r.id, scopes: r.scopes ?? "read" };
     }
   }
   return null;
@@ -83,7 +83,7 @@ export async function validateApiKey(key: string): Promise<{ userId: string; rol
 export async function listApiKeys(userId: string): Promise<any[]> {
   const database = await db();
   if (!database) return [];
-  const result = await database.prepare("SELECT id, user_id, name, role, last_used_at, created_at FROM provenance_api_keys WHERE user_id = ?").bind(userId).all();
+  const result = await database.prepare("SELECT id, user_id, name, role, scopes, last_used_at, created_at FROM provenance_api_keys WHERE user_id = ?").bind(userId).all();
   return result.results ?? [];
 }
 

@@ -234,3 +234,150 @@ describe("E2E: Schema Validation", () => {
     expect(result.success).toBe(true);
   });
 });
+// ─── E2E: Docs Page ───
+
+describe("E2E: Docs Page", () => {
+  it("should have navigation links to all pages", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Dashboard");
+    expect(content).toContain("Records");
+    expect(content).toContain("/spec");
+    expect(content).toContain("OpenAPI");
+  });
+
+  it("should document all API endpoints", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    const endpoints = [
+      "/api/v1/records", "/api/v1/records/list", "/api/v1/records/get", "/api/v1/records/delete",
+      "/api/v1/lineage/trace", "/api/v1/lineage/trace-by-file",
+      "/api/v1/deployments", "/api/v1/deployments/list", "/api/v1/deployments/update-status",
+      "/api/v1/deployments/rollback", "/api/v1/deployments/rollbacks",
+      "/api/v1/certificates", "/api/v1/certificates/verify",
+      "/api/v1/analytics", "/api/v1/graphql",
+      "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/api-keys",
+    ];
+    for (const ep of endpoints) {
+      expect(content).toContain(ep);
+    }
+  });
+
+  it("should have request and response examples", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Request:");
+    expect(content).toContain("Response:");
+    expect(content).toContain("source_project");
+    expect(content).toContain("provenance_id");
+    expect(content).toContain("contentHash");
+  });
+
+  it("should have authentication section", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Authentication");
+    expect(content).toContain("Bearer");
+    expect(content).toContain("Authorization");
+    expect(content).toContain("Rate Limiting");
+  });
+
+  it("should have error codes table", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    const codes = ["validation_error", "unauthorized", "not_found", "rate_limited", "database_unavailable"];
+    for (const code of codes) {
+      expect(content).toContain(code);
+    }
+  });
+
+  it("should have GraphQL query examples", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("provenance");
+    expect(content).toContain("provenances");
+    expect(content).toContain("createRecord");
+    expect(content).toContain("mutation");
+  });
+
+  it("should link to OpenAPI spec", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("/spec");
+    expect(content).toContain("OpenAPI");
+    expect(content).toContain("Download");
+  });
+});
+
+// ─── E2E: OpenAPI Spec ───
+
+describe("E2E: OpenAPI Spec", () => {
+  it("should be valid JSON", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    expect(spec.openapi).toBe("3.1.0");
+    expect(spec.info.title).toBe("Provenance Intelligence System API");
+  });
+
+  it("should document all API paths", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    const paths = Object.keys(spec.paths);
+    expect(paths.length).toBeGreaterThanOrEqual(17);
+    expect(paths).toContain("/api/v1/records");
+    expect(paths).toContain("/api/v1/deployments");
+    expect(paths).toContain("/api/v1/analytics");
+    expect(paths).toContain("/api/v1/graphql");
+  });
+
+  it("should have security schemes", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    expect(spec.components.securitySchemes.BearerAuth).toBeDefined();
+    expect(spec.components.securitySchemes.ApiKeyAuth).toBeDefined();
+  });
+
+  it("should have server URL", async () => {
+    const fs = await import("fs");
+    const spec = JSON.parse(fs.readFileSync("app/public/openapi.json", "utf-8"));
+    expect(spec.servers.length).toBeGreaterThanOrEqual(1);
+    expect(spec.servers[0].url).toContain("provenance-intel");
+  });
+});
+
+// ─── E2E: API Key Scoping ───
+
+describe("E2E: API Key Scoping", () => {
+  it("should create scoped API keys", async () => {
+    const { createApiKey, validateApiKey } = await import("../src/lib/provenance-auth.server");
+    const readKey = await createApiKey("user-1", "Read Only", "user", "read");
+    expect(readKey.scopes).toBe("read");
+    const validated = await validateApiKey(readKey.key);
+    expect(validated).not.toBeNull();
+    expect(validated!.scopes).toBe("read");
+  });
+
+  it("should create write-scoped API keys", async () => {
+    const { createApiKey, validateApiKey } = await import("../src/lib/provenance-auth.server");
+    const writeKey = await createApiKey("user-1", "Write Access", "user", "write");
+    expect(writeKey.scopes).toBe("write");
+    const validated = await validateApiKey(writeKey.key);
+    expect(validated!.scopes).toBe("write");
+  });
+
+  it("should create admin-scoped API keys", async () => {
+    const { createApiKey, validateApiKey } = await import("../src/lib/provenance-auth.server");
+    const adminKey = await createApiKey("user-1", "Admin Access", "admin", "admin");
+    expect(adminKey.scopes).toBe("admin");
+    const validated = await validateApiKey(adminKey.key);
+    expect(validated!.scopes).toBe("admin");
+  });
+
+  it("should list API keys with scopes", async () => {
+    const { listApiKeys } = await import("../src/lib/provenance-auth.server");
+    const keys = await listApiKeys("user-1");
+    expect(keys.length).toBeGreaterThanOrEqual(3);
+    const hasScope = keys.some((k: any) => k.scopes);
+    expect(hasScope).toBe(true);
+  });
+});
