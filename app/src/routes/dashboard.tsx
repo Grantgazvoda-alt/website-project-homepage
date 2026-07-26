@@ -8,6 +8,12 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardPage() {
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKeyName, setApiKeyName] = useState("");
+  const [apiKeyResult, setApiKeyResult] = useState<string | null>(null);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [creatingKey, setCreatingKey] = useState(false);
+
   const { data: analytics } = useQuery({
     queryKey: ["provenance", "analytics"],
     queryFn: () => getAnalyticsFn(),
@@ -21,6 +27,27 @@ function DashboardPage() {
   const a = (analytics as any) ?? {};
   const records = (recent as any)?.data ?? [];
 
+  const handleCreateApiKey = async () => {
+    if (!apiKeyName.trim()) return;
+    setCreatingKey(true);
+    setApiKeyError(null);
+    setApiKeyResult(null);
+    try {
+      const { createApiKey } = await import("../lib/provenance-auth.server");
+      const result = await createApiKey("user-local", apiKeyName.trim(), "user");
+      setApiKeyResult(`Key created: ${result.key}`);
+      setApiKeyName("");
+    } catch (e) {
+      setApiKeyError(e instanceof Error ? e.message : "Failed to create API key");
+    } finally {
+      setCreatingKey(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try { await navigator.clipboard.writeText(text); } catch {}
+  };
+
   return (
     <div className="min-h-dvh bg-[#0a0a0f] text-[#f5f5f7]">
       <header className="sticky top-0 z-20 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(10,10,15,0.8)] backdrop-blur-xl">
@@ -32,8 +59,9 @@ function DashboardPage() {
             <span className="font-semibold">Provenance</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link to="/records" className="text-sm font-medium text-[#0071E3]">Records</Link>
+            <Link to="/records" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Records</Link>
             <Link to="/docs" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">API Docs</Link>
+            <Link to="/spec" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">OpenAPI</Link>
           </div>
         </div>
       </header>
@@ -51,9 +79,7 @@ function DashboardPage() {
           </Link>
           <div className="glass rounded-xl p-5">
             <div className="flex items-center gap-2 text-[#98989d] text-sm">Build Success Rate</div>
-            <div className="mt-2 text-3xl font-bold">
-              {a.total > 0 ? Math.round((a.passed / a.total) * 100) + "%" : "—"}
-            </div>
+            <div className="mt-2 text-3xl font-bold">{a.total > 0 ? Math.round((a.passed / a.total) * 100) + "%" : "—"}</div>
             <p className="mt-1 flex items-center gap-2 text-xs text-[#636366]">
               <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-[#30d158]" /> {a.passed} passed</span>
               <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-[#ff453a]" /> {a.failed} failed</span>
@@ -75,58 +101,112 @@ function DashboardPage() {
         <div className="mt-8 glass rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">API Keys</h2>
-            <a href="/api/v1/auth/api-keys" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create Key →</a>
+            <button onClick={() => { setShowApiKeyModal(true); setApiKeyResult(null); setApiKeyError(null); }}
+              className="rounded-lg bg-[#0071E3] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#0082ff]">
+              + Create New Key
+            </button>
           </div>
-          <p className="text-sm text-[#98989d] mb-4">API keys allow programmatic access to the Provenance API. Use them in the <code className="font-mono text-xs bg-[rgba(255,255,255,0.05)] px-1.5 py-0.5 rounded">Authorization: Bearer &lt;key&gt;</code> header.</p>
-          <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4">
+          <p className="text-sm text-[#98989d] mb-4">
+            API keys allow programmatic access to the Provenance API. Use them in the{' '}
+            <code className="font-mono text-xs bg-[rgba(255,255,255,0.05)] px-1.5 py-0.5 rounded">Authorization: Bearer &lt;key&gt;</code> header.
+          </p>
+          <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4 mb-4">
             <p className="text-xs text-[#ffd60a] font-medium mb-1">Rate Limits</p>
-            <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute. Response headers include <code className="font-mono">X-RateLimit-Remaining</code> and <code className="font-mono">X-RateLimit-Reset</code>.</p>
+            <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute. Exceeded requests return HTTP 429.</p>
           </div>
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-xs text-[#636366]">No API keys created yet</span>
-            <a href="/api/v1/auth/api-keys" className="text-xs text-[#0071E3] hover:text-[#0082ff]">Create your first API key →</a>
+          <div className="flex items-center gap-3 text-sm text-[#636366]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <span>No API keys created yet — click "Create New Key" to generate one.</span>
           </div>
         </div>
 
-        {/* Integration Guide */}
+        {/* API Key Creation Modal */}
+        {showApiKeyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowApiKeyModal(false)}>
+            <div className="mx-4 w-full max-w-md rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(18,18,26,0.95)] p-6 shadow-2xl backdrop-blur-xl" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-lg font-semibold">Create API Key</h2>
+              <p className="mt-1 text-sm text-[#98989d]">Generate a new key for programmatic access.</p>
+
+              {!apiKeyResult ? (
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-[#98989d] mb-2">Key Name</label>
+                  <input type="text" value={apiKeyName} onChange={(e) => setApiKeyName(e.target.value)}
+                    placeholder="e.g. CI/CD Pipeline, StackForge Integration"
+                    className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,15,0.6)] px-4 py-3 text-sm text-[#f5f5f7] outline-none transition focus:border-[#0071E3] focus:ring-2 focus:ring-[rgba(0,113,227,0.2)]" />
+                  {apiKeyError && <p className="mt-2 text-sm text-[#ff453a]">{apiKeyError}</p>}
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button onClick={() => setShowApiKeyModal(false)}
+                      className="rounded-lg border border-[rgba(255,255,255,0.1)] px-5 py-2.5 text-sm font-medium text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)]">Cancel</button>
+                    <button onClick={handleCreateApiKey} disabled={creatingKey || !apiKeyName.trim()}
+                      className="rounded-lg bg-[#0071E3] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0082ff] disabled:opacity-50">
+                      {creatingKey ? "Creating..." : "Create Key"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-6">
+                  <div className="rounded-lg bg-[rgba(48,209,88,0.1)] border border-[rgba(48,209,88,0.2)] p-4">
+                    <p className="text-sm text-[#30d158] font-medium mb-1">Key Created Successfully</p>
+                    <p className="text-xs text-[#98989d] mb-2">Copy this key now. You won't be able to see it again.</p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 rounded bg-[rgba(10,10,15,0.8)] px-3 py-2 text-xs font-mono text-[#f5f5f7] break-all">{apiKeyResult}</code>
+                      <button onClick={() => copyToClipboard(apiKeyResult!)}
+                        className="shrink-0 rounded-lg bg-[#0071E3] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#0082ff]">Copy</button>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <button onClick={() => { setShowApiKeyModal(false); setApiKeyResult(null); }}
+                      className="rounded-lg bg-[#0071E3] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0082ff]">Done</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Quick Start Guide */}
         <div className="mt-6 glass rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">Quick Start</h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <h3 className="text-sm font-medium mb-2">1. Create an API key</h3>
-              <p className="text-xs text-[#98989d] mb-2">Generate a key for your integration.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
-                <code>{`POST /api/v1/auth/api-keys
-Authorization: Bearer &lt;token&gt;
-{ "name": "CI/CD Pipeline" }`}</code>
-              </pre>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">1</span>
+                <h3 className="text-sm font-medium">Create an API key</h3>
+              </div>
+              <p className="text-xs text-[#98989d] mb-2">Generate a key for your integration above.</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/auth/api-keys
+Authorization: Bearer <token>
+{ "name": "CI/CD Pipeline" }`}</code></pre>
             </div>
             <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <h3 className="text-sm font-medium mb-2">2. Submit provenance records</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">2</span>
+                <h3 className="text-sm font-medium">Submit provenance records</h3>
+              </div>
               <p className="text-xs text-[#98989d] mb-2">Send generation data from your code generator.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
-                <code>{`POST /api/v1/records
-Authorization: Bearer &lt;api-key&gt;
-{ "source_project": "gummy-bear", ... }`}</code>
-              </pre>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/records
+Authorization: Bearer <api-key>
+{ "source_project": "gummy-bear", ... }`}</code></pre>
             </div>
             <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <h3 className="text-sm font-medium mb-2">3. Track deployments</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">3</span>
+                <h3 className="text-sm font-medium">Track deployments</h3>
+              </div>
               <p className="text-xs text-[#98989d] mb-2">Record where and when code was deployed.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
-                <code>{`POST /api/v1/deployments
-Authorization: Bearer &lt;api-key&gt;
-{ "provenance_id": "uuid", ... }`}</code>
-              </pre>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/deployments
+Authorization: Bearer <api-key>
+{ "provenance_id": "uuid", ... }`}</code></pre>
             </div>
             <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
-              <h3 className="text-sm font-medium mb-2">4. Verify lineage</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="flex size-6 items-center justify-center rounded-full bg-[#0071E3]/20 text-xs font-bold text-[#0071E3]">4</span>
+                <h3 className="text-sm font-medium">Verify lineage</h3>
+              </div>
               <p className="text-xs text-[#98989d] mb-2">Trace files back to their origin.</p>
-              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
-                <code>{`POST /api/v1/lineage/trace
-Authorization: Bearer &lt;api-key&gt;
-{ "contentHash": "sha256-abc123" }`}</code>
-              </pre>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded"><code>{`POST /api/v1/lineage/trace
+Authorization: Bearer <api-key>
+{ "contentHash": "sha256-abc123" }`}</code></pre>
             </div>
           </div>
         </div>
