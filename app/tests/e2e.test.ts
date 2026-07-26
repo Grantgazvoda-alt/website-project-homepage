@@ -742,3 +742,138 @@ describe("Integration: Scope Management UI Docs", () => {
     expect(content).toContain("copy it immediately");
   });
 });
+
+// ─── E2E: Full Scope Lifecycle Flow ───
+
+describe("E2E: Full Scope Lifecycle Flow", () => {
+  it("should complete full scope lifecycle: create → validate → update → validate → delete → validate", async () => {
+    const { createApiKey, validateApiKey, updateApiKeyScope, deleteApiKey } = await import("../src/lib/provenance-auth.server");
+    // 1. Create key with read scope
+    const { key, id } = await createApiKey("e2e-flow", "E2E Full Flow Key", "user", "read");
+    expect(key.startsWith("pv_")).toBe(true);
+    let validated = await validateApiKey(key);
+    expect(validated).not.toBeNull();
+    expect(validated!.scopes).toBe("read");
+    expect(validated!.userId).toBe("e2e-flow");
+
+    // 2. Update scope to write
+    await updateApiKeyScope(id, "write", "e2e-flow");
+    validated = await validateApiKey(key);
+    expect(validated!.scopes).toBe("write");
+
+    // 3. Update scope to admin
+    await updateApiKeyScope(id, "admin", "e2e-flow");
+    validated = await validateApiKey(key);
+    expect(validated!.scopes).toBe("admin");
+    expect(validated!.role).toBe("admin");
+
+    // 4. Delete the key
+    await deleteApiKey(id, "e2e-flow");
+    validated = await validateApiKey(key);
+    expect(validated).toBeNull();
+  });
+
+  it("should handle multiple scope updates in sequence", async () => {
+    const { createApiKey, validateApiKey, updateApiKeyScope, deleteApiKey } = await import("../src/lib/provenance-auth.server");
+    const { key, id } = await createApiKey("e2e-seq", "Sequence Test", "user", "read");
+    const scopes = ["write", "admin", "read", "write"];
+    for (const scope of scopes) {
+      await updateApiKeyScope(id, scope, "e2e-seq");
+      const validated = await validateApiKey(key);
+      expect(validated!.scopes).toBe(scope);
+    }
+    await deleteApiKey(id, "e2e-seq");
+  });
+
+  it("should create and manage multiple keys with different scopes", async () => {
+    const { createApiKey, validateApiKey, updateApiKeyScope, deleteApiKey, listApiKeysByScope } = await import("../src/lib/provenance-auth.server");
+    const user = "e2e-multi-" + Date.now();
+    const keys = [
+      { name: "Monitor", scope: "read" },
+      { name: "Integrator", scope: "write" },
+      { name: "Manager", scope: "admin" },
+    ];
+    const created: { key: string; id: string }[] = [];
+    for (const k of keys) {
+      const result = await createApiKey(user, k.name, k.scope === "admin" ? "admin" : "user", k.scope);
+      created.push(result);
+      const validated = await validateApiKey(result.key);
+      expect(validated!.scopes).toBe(k.scope);
+    }
+    // Verify list by scope
+    for (const k of keys) {
+      const scopedKeys = await listApiKeysByScope(k.scope);
+      expect(scopedKeys.some((sk: any) => sk.name === k.name)).toBe(true);
+    }
+    // Cleanup
+    for (const c of created) {
+      await deleteApiKey(c.id, user);
+      expect(await validateApiKey(c.key)).toBeNull();
+    }
+  });
+});
+
+// ─── E2E: Audit Logging Scope Changes ───
+
+describe("E2E: Audit Logging Scope Changes", () => {
+  it("should log scope updates", async () => {
+    const { createApiKey, updateApiKeyScope, logAuditEvent, listAuditLogs, deleteApiKey } = await import("../src/lib/provenance-auth.server");
+    const { key, id } = await createApiKey("audit-test", "Audit Key", "user", "read");
+    await updateApiKeyScope(id, "write", "admin-user");
+    const logs = await listAuditLogs("api_key", id);
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+    const scopeLog = logs.find((l: any) => l.action === "scope_update");
+    expect(scopeLog).toBeDefined();
+    expect(scopeLog.actor_id).toBe("admin-user");
+    expect(scopeLog.old_value).toBe("read");
+    expect(scopeLog.new_value).toBe("write");
+    await deleteApiKey(id, "audit-test");
+  });
+
+  it("should log key deletions", async () => {
+    const { createApiKey, deleteApiKey, listAuditLogs } = await import("../src/lib/provenance-auth.server");
+    const { key, id } = await createApiKey("audit-test2", "Delete Audit Key", "user", "read");
+    await deleteApiKey(id, "admin-user");
+    const logs = await listAuditLogs("api_key", id);
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+    const deleteLog = logs.find((l: any) => l.action === "key_delete");
+    expect(deleteLog).toBeDefined();
+    expect(deleteLog.actor_id).toBe("admin-user");
+  });
+
+  it("should list audit logs with filters", async () => {
+    const { logAuditEvent, listAuditLogs } = await import("../src/lib/provenance-auth.server");
+    await logAuditEvent("test-user", "test_action", "test_type", "test-id-1", "old", "new", "test");
+    const logs = await listAuditLogs("test_type", "test-id-1");
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+    expect(logs[0].action).toBe("test_action");
+    expect(logs[0].actor_id).toBe("test-user");
+    expect(logs[0].old_value).toBe("old");
+    expect(logs[0].new_value).toBe("new");
+  });
+});
+
+// ─── E2E: PDF Export / Docs Export ───
+
+describe("E2E: Docs Export", () => {
+  it("should have export functionality", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Export");
+    expect(content).toContain("Download");
+  });
+
+  it("should have print-friendly structure", async () => {
+    const fs = await import("fs");
+    const content = fs.readFileSync("app/src/routes/docs.tsx", "utf-8");
+    expect(content).toContain("Authentication");
+    expect(content).toContain("Provenance Records");
+    expect(content).toContain("Lineage Tracing");
+    expect(content).toContain("Deployments");
+    expect(content).toContain("Certificates");
+    expect(content).toContain("Analytics");
+    expect(content).toContain("GraphQL");
+    expect(content).toContain("Error Codes");
+    expect(content).toContain("Custom Domain");
+  });
+});

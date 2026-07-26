@@ -59,3 +59,17 @@
   .gradient-accent { background: linear-gradient(135deg, #0071E3 0%, #0082ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .grid-bg { background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 48px 48px; }
 }
+/* Print/PDF export styles */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .glass, .glass-strong { background: #fff !important; backdrop-filter: none !important; border: 1px solid #ddd !important; }
+  header, footer, nav, .sticky, .fixed { display: none !important; }
+  a { color: #0071E3 !important; }
+  pre, code { background: #f5f5f5 !important; color: #333 !important; }
+  .gradient-text, .gradient-accent { background: none !important; -webkit-text-fill-color: #000 !important; color: #000 !important; }
+  .bg-\\[#0a0a0f\\] { background: #fff !important; }
+  .text-\\[#f5f5f7\\] { color: #000 !important; }
+  .text-\\[#98989d\\] { color: #666 !important; }
+  .text-\\[#636366\\] { color: #888 !important; }
+  @page { margin: 2cm; }
+}

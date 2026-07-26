@@ -199,10 +199,16 @@ function DocsPage() {
         <div className="glass rounded-xl p-6 text-center">
           <h2 className="text-lg font-semibold mb-2">OpenAPI Specification</h2>
           <p className="text-sm text-[#98989d] mb-4">Download the complete OpenAPI 3.1.0 specification for use with your API client.</p>
-          <a href="/spec" className="inline-flex items-center gap-2 rounded-lg bg-[#0071E3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0082ff]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
-            Download OpenAPI Spec
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a href="/spec" className="inline-flex items-center gap-2 rounded-lg bg-[#0071E3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0082ff]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
+              Download OpenAPI Spec
+            </a>
+            <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.1)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[rgba(255,255,255,0.05)]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+              Export as PDF / Print
+            </button>
+          </div>
         </div>
       </main>
     </div>

@@ -87,26 +87,61 @@ export async function listApiKeys(userId: string): Promise<any[]> {
   return result.results ?? [];
 }
 
-export async function deleteApiKey(id: string): Promise<void> {
+export async function deleteApiKey(id: string, actorId = "system"): Promise<void> {
   const database = await db();
   if (!database) return;
+  const old = await database.prepare("SELECT name, scopes FROM provenance_api_keys WHERE id = ?").bind(id).first<{ name: string; scopes: string }>();
   await database.prepare("DELETE FROM provenance_api_keys WHERE id = ?").bind(id).run();
+  if (old) {
+    await logAuditEvent(actorId, "key_delete", "api_key", id, old.scopes, "", JSON.stringify({ key_name: old.name }));
+  }
 }
 
 // ─── Scope Management ───
 
-export async function updateApiKeyScope(keyId: string, newScopes: string): Promise<void> {
+export async function updateApiKeyScope(keyId: string, newScopes: string, actorId = "system"): Promise<void> {
   const database = await db();
   if (!database) throw new Error("Database not available");
   const validScopes = ["read", "write", "admin"];
   if (!validScopes.includes(newScopes)) throw new Error("Invalid scope. Must be: read, write, or admin");
+  // Get the old scope for audit logging
+  const old = await database.prepare("SELECT scopes, name FROM provenance_api_keys WHERE id = ?").bind(keyId).first<{ scopes: string; name: string }>();
+  if (!old) throw new Error("API key not found");
   await database.prepare("UPDATE provenance_api_keys SET scopes = ? WHERE id = ?").bind(newScopes, keyId).run();
+  // Log the scope change
+  await logAuditEvent(actorId, "scope_update", "api_key", keyId, old.scopes, newScopes, JSON.stringify({ key_name: old.name }));
 }
 
 export async function listApiKeysByScope(scope: string): Promise<any[]> {
   const database = await db();
   if (!database) return [];
   const result = await database.prepare("SELECT id, user_id, name, role, scopes, last_used_at, created_at FROM provenance_api_keys WHERE scopes = ? ORDER BY created_at DESC").bind(scope).all();
+  return result.results ?? [];
+}
+
+// ─── Audit Logging ───
+
+export async function logAuditEvent(actorId: string, action: string, targetType: string, targetId: string, oldValue?: string, newValue?: string, metadata?: string): Promise<void> {
+  const database = await db();
+  if (!database) return;
+  const id = generateId();
+  await database.prepare(
+    "INSERT INTO provenance_audit_log (id, actor_id, action, target_type, target_id, old_value, new_value, metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+  ).bind(id, actorId, action, targetType, targetId, oldValue ?? "", newValue ?? "", metadata ?? "").run();
+}
+
+export async function listAuditLogs(targetType?: string, targetId?: string, limit = 50, offset = 0): Promise<any[]> {
+  const database = await db();
+  if (!database) return [];
+  let query = "SELECT * FROM provenance_audit_log";
+  const params: string[] = [];
+  const conditions: string[] = [];
+  if (targetType) { conditions.push("target_type = ?"); params.push(targetType); }
+  if (targetId) { conditions.push("target_id = ?"); params.push(targetId); }
+  if (conditions.length > 0) query += " WHERE " + conditions.join(" AND ");
+  query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+  params.push(String(limit), String(offset));
+  const result = await database.prepare(query).bind(...params).all();
   return result.results ?? [];
 }
 
