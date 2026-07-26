@@ -1,0 +1,37 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Provenance Intelligence System API",
+    "version": "1.0.0",
+    "description": "REST API for code lineage tracking, deployment provenance, and origin certificates."
+  },
+  "servers": [
+    { "url": "https://provenance-intel.higgsfield.app", "description": "Production" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" },
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "Authorization" }
+    }
+  },
+  "paths": {
+    "/api/v1/records": { "post": { "summary": "Create a provenance record", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "201": { "description": "Record created" } } } },
+    "/api/v1/records/list": { "post": { "summary": "List provenance records", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "List of records" } } } },
+    "/api/v1/records/get": { "post": { "summary": "Get a single record", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Full record with lineage" } } } },
+    "/api/v1/records/delete": { "post": { "summary": "Delete a record", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Record deleted" } } } },
+    "/api/v1/lineage/trace": { "post": { "summary": "Trace by content hash", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Lineage entries" } } } },
+    "/api/v1/lineage/trace-by-file": { "post": { "summary": "Trace by file path", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Lineage entries" } } } },
+    "/api/v1/deployments": { "post": { "summary": "Create a deployment", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "201": { "description": "Deployment created" } } } },
+    "/api/v1/deployments/list": { "post": { "summary": "List deployments", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "List of deployments" } } } },
+    "/api/v1/deployments/update-status": { "post": { "summary": "Update deployment status", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Status updated" } } } },
+    "/api/v1/deployments/rollback": { "post": { "summary": "Rollback a deployment", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Deployment rolled back" } } } },
+    "/api/v1/deployments/rollbacks": { "post": { "summary": "List rollback history", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "List of rollbacks" } } } },
+    "/api/v1/certificates": { "post": { "summary": "Generate a certificate", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "201": { "description": "Certificate generated" } } } },
+    "/api/v1/certificates/verify": { "post": { "summary": "Verify a certificate", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Verification result" } } } },
+    "/api/v1/analytics": { "post": { "summary": "Get analytics", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "Analytics data" } } } },
+    "/api/v1/graphql": { "post": { "summary": "Execute GraphQL query", "security": [{ "BearerAuth": [] }, { "ApiKeyAuth": [] }], "responses": { "200": { "description": "GraphQL response" } } } },
+    "/api/v1/auth/register": { "post": { "summary": "Register a new user", "responses": { "201": { "description": "User registered" } } } },
+    "/api/v1/auth/login": { "post": { "summary": "Login", "responses": { "200": { "description": "Login successful" } } } },
+    "/api/v1/auth/api-keys": { "post": { "summary": "Create an API key", "security": [{ "BearerAuth": [] }], "responses": { "201": { "description": "API key created" } } } }
+  }
+}

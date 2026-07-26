@@ -16,7 +16,6 @@ import { Route as GraphqlRouteImport } from './routes/graphql'
 import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as OpenapiJsonRouteImport } from './routes/openapi.json'
 import { Route as RecordsRecordIdRouteImport } from './routes/records.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -54,11 +53,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OpenapiJsonRoute = OpenapiJsonRouteImport.update({
-  id: '/openapi/json',
-  path: '/openapi/json',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RecordsRecordIdRoute = RecordsRecordIdRouteImport.update({
   id: '/$recordId',
   path: '/$recordId',
@@ -73,7 +67,6 @@ export interface FileRoutesByFullPath {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/openapi/json': typeof OpenapiJsonRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesByTo {
@@ -84,7 +77,6 @@ export interface FileRoutesByTo {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/openapi/json': typeof OpenapiJsonRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesById {
@@ -96,7 +88,6 @@ export interface FileRoutesById {
   '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/openapi/json': typeof OpenapiJsonRoute
   '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRouteTypes {
@@ -109,7 +100,6 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/openapi/json'
     | '/records/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -120,7 +110,6 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/openapi/json'
     | '/records/$recordId'
   id:
     | '__root__'
@@ -131,7 +120,6 @@ export interface FileRouteTypes {
     | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/openapi/json'
     | '/records/$recordId'
   fileRoutesById: FileRoutesById
 }
@@ -143,7 +131,6 @@ export interface RootRouteChildren {
   RecordsRoute: typeof RecordsRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  OpenapiJsonRoute: typeof OpenapiJsonRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,13 +184,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/openapi/json': {
-      id: '/openapi/json'
-      path: '/openapi/json'
-      fullPath: '/openapi/json'
-      preLoaderRoute: typeof OpenapiJsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/records/$recordId': {
       id: '/records/$recordId'
       path: '/$recordId'
@@ -233,7 +213,6 @@ const rootRouteChildren: RootRouteChildren = {
   RecordsRoute: RecordsRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  OpenapiJsonRoute: OpenapiJsonRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
