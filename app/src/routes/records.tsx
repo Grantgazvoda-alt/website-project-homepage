@@ -72,7 +72,7 @@ function RecordsPage() {
           </div>
         ) : records.length === 0 ? (
           <div className="mt-8 glass rounded-xl py-20 text-center">
-            <p className="text-[#98989d]">No records found{sourceFilter ? ` for ${sourceFilter}` : ""}. Integrate StackForge or Gummy Bear to generate provenance data.</p>
+            <p className="text-[#98989d]">No provenance records yet. <button onClick={async () => { try { const { seedFn } = await import("../routes/api/v1/-seed"); const result = await seedFn(); alert("Created " + result.created + " sample records. Refresh to see them."); window.location.reload(); } catch(e) { alert("Error: " + e); } }} className="ml-2 rounded-lg bg-[#0071E3] px-3 py-1 text-xs font-medium text-white transition hover:bg-[#0082ff]">Seed Sample Data</button>
           </div>
         ) : (
           <div className="mt-6 overflow-hidden rounded-xl border border-[rgba(255,255,255,0.06)]">
@@ -108,7 +108,7 @@ function RecordsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-[#98989d]">{r.file_count || 0}</td>
-                    <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "--"}</td>
+                    <td className="px-4 py-3 text-[#98989d] font-mono text-xs">{r.model_used || "No data"}</td>
                     <td className="px-4 py-3 text-[#98989d]">{r.deployments ?? "--"}</td>
                     <td className="px-4 py-3 text-[#636366] text-xs">{r.created_at ? new Date(r.created_at + "Z").toLocaleDateString() : "--"}</td>
                   </tr>
