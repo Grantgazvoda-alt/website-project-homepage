@@ -24,8 +24,9 @@ function LandingPage() {
           <span className="text-lg font-semibold tracking-tight">Provenance</span>
         </div>
         <div className="flex items-center gap-4">
-          <a href="/api/v1/records" className="text-sm font-medium text-[#98989d] transition hover:text-[#f5f5f7]">API</a>
-          <a href="/dashboard" className="rounded-lg bg-[#0071E3] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#0082ff]">Dashboard</a>
+          <a href="/docs" className="text-sm font-medium text-[#98989d] transition hover:text-[#f5f5f7]">API</a>
+          <a href="/dashboard" className="rounded-lg bg-[#0071E3] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#0082ff]">Records</a>
+          <a href="/api/v1/records" class="rounded-lg bg-[#0071E3] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#0082ff]">View API Docs</a>
         </div>
       </nav>
 
