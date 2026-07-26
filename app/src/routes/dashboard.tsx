@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAnalyticsFn, listRecordsFn } from "../lib/provenance.functions";
 
@@ -32,7 +33,7 @@ function DashboardPage() {
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/records" className="text-sm font-medium text-[#0071E3]">Records</Link>
-            <Link to="/graphql" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">GraphQL</Link>
+            <Link to="/docs" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">API Docs</Link>
           </div>
         </div>
       </header>
@@ -41,6 +42,7 @@ function DashboardPage() {
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="mt-1 text-[#98989d]">Provenance Intelligence System — code lineage, deployment tracking, and origin certificates</p>
 
+        {/* Overview Cards */}
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link to="/records" className="glass rounded-xl p-5 transition hover:border-[rgba(0,113,227,0.3)]">
             <div className="flex items-center gap-2 text-[#98989d] text-sm">Total Records</div>
@@ -69,20 +71,67 @@ function DashboardPage() {
           </div>
         </div>
 
-        {a.bySource && a.bySource.length > 0 && (
-          <div className="mt-6 glass rounded-xl p-5">
-            <h3 className="text-sm font-semibold mb-3">Records by Source</h3>
-            <div className="flex gap-4">
-              {a.bySource.map((s: any) => (
-                <div key={s.source_project} className="flex items-center gap-2 rounded-lg bg-[rgba(255,255,255,0.03)] px-4 py-3">
-                  <span className="rounded-full bg-[rgba(0,113,227,0.1)] px-2 py-0.5 text-xs text-[#0071E3]">{s.source_project}</span>
-                  <span className="text-lg font-bold">{s.n}</span>
-                </div>
-              ))}
+        {/* API Key Management */}
+        <div className="mt-8 glass rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">API Keys</h2>
+            <a href="/api/v1/auth/api-keys" className="text-sm text-[#0071E3] hover:text-[#0082ff]">Create Key →</a>
+          </div>
+          <p className="text-sm text-[#98989d] mb-4">API keys allow programmatic access to the Provenance API. Use them in the <code className="font-mono text-xs bg-[rgba(255,255,255,0.05)] px-1.5 py-0.5 rounded">Authorization: Bearer &lt;key&gt;</code> header.</p>
+          <div className="rounded-lg bg-[rgba(255,214,10,0.05)] border border-[rgba(255,214,10,0.15)] p-4">
+            <p className="text-xs text-[#ffd60a] font-medium mb-1">Rate Limits</p>
+            <p className="text-xs text-[#98989d]">API keys are rate-limited to 100 requests per minute. Response headers include <code className="font-mono">X-RateLimit-Remaining</code> and <code className="font-mono">X-RateLimit-Reset</code>.</p>
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-xs text-[#636366]">No API keys created yet</span>
+            <a href="/api/v1/auth/api-keys" className="text-xs text-[#0071E3] hover:text-[#0082ff]">Create your first API key →</a>
+          </div>
+        </div>
+
+        {/* Integration Guide */}
+        <div className="mt-6 glass rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4">Quick Start</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+              <h3 className="text-sm font-medium mb-2">1. Create an API key</h3>
+              <p className="text-xs text-[#98989d] mb-2">Generate a key for your integration.</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
+                <code>{`POST /api/v1/auth/api-keys
+Authorization: Bearer &lt;token&gt;
+{ "name": "CI/CD Pipeline" }`}</code>
+              </pre>
+            </div>
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+              <h3 className="text-sm font-medium mb-2">2. Submit provenance records</h3>
+              <p className="text-xs text-[#98989d] mb-2">Send generation data from your code generator.</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
+                <code>{`POST /api/v1/records
+Authorization: Bearer &lt;api-key&gt;
+{ "source_project": "gummy-bear", ... }`}</code>
+              </pre>
+            </div>
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+              <h3 className="text-sm font-medium mb-2">3. Track deployments</h3>
+              <p className="text-xs text-[#98989d] mb-2">Record where and when code was deployed.</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
+                <code>{`POST /api/v1/deployments
+Authorization: Bearer &lt;api-key&gt;
+{ "provenance_id": "uuid", ... }`}</code>
+              </pre>
+            </div>
+            <div className="rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+              <h3 className="text-sm font-medium mb-2">4. Verify lineage</h3>
+              <p className="text-xs text-[#98989d] mb-2">Trace files back to their origin.</p>
+              <pre className="text-xs font-mono text-[#98989d] bg-[rgba(10,10,15,0.6)] p-2 rounded">
+                <code>{`POST /api/v1/lineage/trace
+Authorization: Bearer &lt;api-key&gt;
+{ "contentHash": "sha256-abc123" }`}</code>
+              </pre>
             </div>
           </div>
-        )}
+        </div>
 
+        {/* Recent Records */}
         {records.length > 0 ? (
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
@@ -132,6 +181,7 @@ function DashboardPage() {
             <p className="mt-2 text-[#98989d] max-w-lg mx-auto">Connect StackForge or Gummy Bear to start recording code generation lineage, deployment tracking, and origin certificates.</p>
             <div className="mt-6 flex justify-center gap-3">
               <Link to="/records" className="rounded-lg bg-[#0071E3] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0082ff]">View Records</Link>
+              <Link to="/docs" className="rounded-lg border border-[rgba(255,255,255,0.1)] px-6 py-3 text-sm font-medium text-[#98989d] transition hover:bg-[rgba(255,255,255,0.05)]">API Documentation</Link>
             </div>
           </div>
         )}
