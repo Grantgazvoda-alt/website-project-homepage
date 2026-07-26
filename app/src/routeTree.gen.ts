@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuditRouteImport } from './routes/audit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as GraphqlRouteImport } from './routes/graphql'
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -74,6 +80,7 @@ const RecordsRecordIdRoute = RecordsRecordIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/graphql': typeof GraphqlRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/graphql': typeof GraphqlRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/graphql': typeof GraphqlRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/audit'
     | '/dashboard'
     | '/docs'
     | '/graphql'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/audit'
     | '/dashboard'
     | '/docs'
     | '/graphql'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/audit'
     | '/dashboard'
     | '/docs'
     | '/graphql'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AuditRoute: typeof AuditRoute
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
   GraphqlRoute: typeof GraphqlRoute
@@ -173,6 +186,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -248,6 +268,7 @@ const RecordsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AuditRoute: AuditRoute,
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
   GraphqlRoute: GraphqlRoute,

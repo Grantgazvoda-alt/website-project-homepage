@@ -59,6 +59,7 @@ function AdminPage() {
             <Link to="/dashboard" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Dashboard</Link>
             <Link to="/records" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Records</Link>
             <Link to="/docs" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">API Docs</Link>
+            <Link to="/audit" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Audit Log</Link>
           </div>
         </div>
       </header>

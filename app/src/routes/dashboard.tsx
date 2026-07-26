@@ -70,6 +70,7 @@ function DashboardPage() {
             <Link to="/docs" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">API Docs</Link>
             <Link to="/spec" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">OpenAPI</Link>
             <Link to="/admin" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Admin</Link>
+            <Link to="/audit" className="text-sm text-[#98989d] transition hover:text-[#f5f5f7]">Audit</Link>
           </div>
         </div>
       </header>
