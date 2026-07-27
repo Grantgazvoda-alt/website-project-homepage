@@ -11,15 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AuditRouteImport } from './routes/audit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DocsRouteImport } from './routes/docs'
-import { Route as GraphqlRouteImport } from './routes/graphql'
-import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SpecRouteImport } from './routes/spec'
-import { Route as RecordsRecordIdRouteImport } from './routes/records.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,11 +27,6 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuditRoute = AuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -44,16 +35,6 @@ const DashboardRoute = DashboardRouteImport.update({
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GraphqlRoute = GraphqlRouteImport.update({
-  id: '/graphql',
-  path: '/graphql',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecordsRoute = RecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -71,102 +52,70 @@ const SpecRoute = SpecRouteImport.update({
   path: '/spec',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RecordsRecordIdRoute = RecordsRecordIdRouteImport.update({
-  id: '/$recordId',
-  path: '/$recordId',
-  getParentRoute: () => RecordsRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/graphql': typeof GraphqlRoute
-  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spec': typeof SpecRoute
-  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/graphql': typeof GraphqlRoute
-  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spec': typeof SpecRoute
-  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/audit': typeof AuditRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/graphql': typeof GraphqlRoute
-  '/records': typeof RecordsRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spec': typeof SpecRoute
-  '/records/$recordId': typeof RecordsRecordIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
-    | '/audit'
     | '/dashboard'
     | '/docs'
-    | '/graphql'
-    | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/spec'
-    | '/records/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
-    | '/audit'
     | '/dashboard'
     | '/docs'
-    | '/graphql'
-    | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/spec'
-    | '/records/$recordId'
   id:
     | '__root__'
     | '/'
     | '/admin'
-    | '/audit'
     | '/dashboard'
     | '/docs'
-    | '/graphql'
-    | '/records'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/spec'
-    | '/records/$recordId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
-  AuditRoute: typeof AuditRoute
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
-  GraphqlRoute: typeof GraphqlRoute
-  RecordsRoute: typeof RecordsRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpecRoute: typeof SpecRoute
@@ -188,13 +137,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/audit': {
-      id: '/audit'
-      path: '/audit'
-      fullPath: '/audit'
-      preLoaderRoute: typeof AuditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -207,20 +149,6 @@ declare module '@tanstack/react-router' {
       path: '/docs'
       fullPath: '/docs'
       preLoaderRoute: typeof DocsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/graphql': {
-      id: '/graphql'
-      path: '/graphql'
-      fullPath: '/graphql'
-      preLoaderRoute: typeof GraphqlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/records': {
-      id: '/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof RecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -244,35 +172,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpecRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/records/$recordId': {
-      id: '/records/$recordId'
-      path: '/$recordId'
-      fullPath: '/records/$recordId'
-      preLoaderRoute: typeof RecordsRecordIdRouteImport
-      parentRoute: typeof RecordsRoute
-    }
   }
 }
-
-interface RecordsRouteChildren {
-  RecordsRecordIdRoute: typeof RecordsRecordIdRoute
-}
-
-const RecordsRouteChildren: RecordsRouteChildren = {
-  RecordsRecordIdRoute: RecordsRecordIdRoute,
-}
-
-const RecordsRouteWithChildren =
-  RecordsRoute._addFileChildren(RecordsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
-  AuditRoute: AuditRoute,
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
-  GraphqlRoute: GraphqlRoute,
-  RecordsRoute: RecordsRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpecRoute: SpecRoute,
