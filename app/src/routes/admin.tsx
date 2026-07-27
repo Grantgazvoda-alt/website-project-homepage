@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { listApiKeysFn, deleteApiKeyFn, updateApiKeyScopeFn } from "../lib/auth.functions";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -14,15 +15,14 @@ function AdminPage() {
   const { data: keys, isLoading, refetch } = useQuery({
     queryKey: ["provenance", "admin", "keys"],
     queryFn: async () => {
-      const { listApiKeys } = await import("../lib/provenance-auth.server");
-      return listApiKeys("admin") as any;
+      const result = await listApiKeysFn({ data: { userId: "admin" } });
+      return result as any;
     },
   });
 
   const handleUpdateScope = async (keyId: string) => {
     try {
-      const { updateApiKeyScope } = await import("../lib/provenance-auth.server");
-      await updateApiKeyScope(keyId, newScope);
+      await updateApiKeyScopeFn({ data: { id: keyId, scopes: newScope } });
       setUpdateResult("Scope updated successfully");
       setEditingScope(null);
       refetch();
@@ -34,8 +34,7 @@ function AdminPage() {
   const handleDeleteKey = async (keyId: string) => {
     if (!confirm("Delete this API key? This cannot be undone.")) return;
     try {
-      const { deleteApiKey } = await import("../lib/provenance-auth.server");
-      await deleteApiKey(keyId);
+      await deleteApiKeyFn({ data: { id: keyId } });
       setUpdateResult("API key deleted");
       refetch();
     } catch (e) {
